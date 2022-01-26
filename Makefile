@@ -1,9 +1,11 @@
 CC			= c++
-CFLAGS		= -g -std=c++98 -Wall -Wextra -Werror
+CFLAGS		= -g -Wall -Wextra -Werror
+NAMESPACE	= FT
 
 #----------------------------MANDATORY----------------------------
 
-NAME		= containers
+FT_NAME		= ft_containers
+STD_NAME	= std_containers
 
 SRC_DIR		= src
 SRC			= $(patsubst %, $(SRC_DIR)/%, main.cpp)
@@ -13,26 +15,34 @@ OBJ			= $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 DEP_DIR		= dep
 DEP			= $(SRC:$(SRC_DIR)/%.cpp=$(DEP_DIR)/%.d)
 
-$(NAME):	$(OBJ)
+$(FT_NAME):	$(OBJ)
 			$(CC) $(CFLAGS) $(OBJ) -o $@
-			@echo "$(Green)*** $(UGreen)Successfully compiled $(NAME)$(Green) ***$(nc)"
+			@echo "$(Green)*** $(UGreen)Successfully compiled $(FT_NAME)$(Green) ***$(nc)"
+
+$(STD_NAME):	$(OBJ)
+			$(CC) $(CFLAGS) $(OBJ) -o $@
+			@echo "$(Green)*** $(UGreen)Successfully compiled $(STD_NAME)$(Green) ***$(nc)"
 
 -include $(DEP)
 
 $(OBJ_DIR)/%.o:$(SRC_DIR)/%.cpp
 			@mkdir -p $(OBJ_DIR) $(DEP_DIR)
-			$(CC) -MMD $(CFLAGS) -I include -c $< -o $@
+			$(CC) -MMD $(CFLAGS) -D $(NAMESPACE) -I include -c $< -o $@
 			@mv $(OBJ_DIR)/*.d $(DEP_DIR)
 
-all:		$(NAME)
+all:		$(FT_NAME) $(STD_NAME)
+
+ft:			NAMESPACE = FT $(FT_NAME)
+
+std:		NAMESPACE = STD $(STD_NAME)
 
 clean:
-			@echo "$(BRed)/!\\ $(BYellow)Remove $(NAME) obj and dep$(BRed) /!\\ $(nc)"
+			@echo "$(BRed)/!\\ $(BYellow)Remove containers obj and dep$(BRed) /!\\ $(nc)"
 			@$(RM) $(OBJ) $(DEP)
 
 fclean:		clean
-			@echo "$(BRed)/!\\ $(BYellow)Remove $(NAME)$(BRed) /!\\ $(nc)"
-			@$(RM) $(NAME)
+			@echo "$(BRed)/!\\ $(BYellow)Remove $(FT_NAME) and $(STD_NAME)$(BRed) /!\\ $(nc)"
+			@$(RM) $(FT_NAME) $(STD_NAME)
 
 re:			fclean all
 
