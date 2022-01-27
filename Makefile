@@ -1,5 +1,5 @@
 CC			= c++
-CFLAGS		= -g -Wall -Wextra -Werror
+CFLAGS		= -g -Wall -Wextra -Werror -std=c++98
 NAMESPACE	= FT
 
 #----------------------------MANDATORY----------------------------
