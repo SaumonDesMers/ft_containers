@@ -2,49 +2,53 @@
 #define VECTOR_HPP
 
 #include <iostream>
-#include <iterator>
-/*
+#include <iterator.hpp>
+
 namespace ft
 {
-	template <class Type, class Allocator = std::allocator<Type> >
+	template <class T, class Alloc = std::allocator<T> >
 	class vector {
 
 		public:
 
-			// typedef typename value_type				T;
-			// typedef typename allocator_type			Allocator;
-			// typedef typename size_type				std::size_t;
-			// typedef typename difference_type		std::ptrdiff_t;
-			// typedef typename reference				value_type&;
-			// typedef typename const_reference		const value_type&;
-			// typedef typename pointer				Allocator::pointer;
-			// typedef typename const_pointer			Allocator::const_pointer;
-			// typedef typename reverse_iterator		std::reverse_iterator<iterator>;
-			// typedef typename const_reverse_iterator	std::reverse_iterator<const_iterator>;
+			typedef T												value_type;
+			typedef Alloc											allocator_type;
+			typedef typename std::size_t							size_type;
+			typedef typename std::ptrdiff_t							difference_type;
+			typedef value_type&										reference;
+			typedef const value_type&								const_reference;
+			typedef typename Alloc::pointer							pointer;
+			typedef typename Alloc::const_pointer					const_pointer;
+			// typedef typename std::reverse_iterator<iterator>		reverse_iterator;
+			// typedef typename std::reverse_iterator<const_iterator>	const_reverse_iterator;
+
+			//########################################################################
+
+			vector();
 
 	};
 
-	template <class Type, class Allocator = std::allocator<Type> >
-	bool operator== ( const ft::vector<Type, Allocator>& left, const ft::vector<Type, Allocator>& right);
+	template <class T, class Alloc>
+	bool operator== ( const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right);
 
-	template <class Type, class Allocator = std::allocator<Type> >
-	bool operator!= ( const ft::vector<Type, Allocator>& left, const ft::vector<Type, Allocator>& right);
+	template <class T, class Alloc>
+	bool operator!= ( const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right);
 
-	template <class Type, class Allocator = std::allocator<Type> >
-	bool operator<( const ft::vector<Type, Allocator>& left, const ft::vector<Type, Allocator>& right);
+	template <class T, class Alloc>
+	bool operator<( const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right);
 
-	template <class Type, class Allocator = std::allocator<Type> >
-	bool operator> ( const ft::vector<Type, Allocator>& left, const ft::vector<Type, Allocator>& right);
+	template <class T, class Alloc>
+	bool operator> ( const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right);
 
-	template <class Type, class Allocator = std::allocator<Type> >
-	bool operator<= ( const ft::vector<Type, Allocator>& left, const ft::vector<Type, Allocator>& right);
+	template <class T, class Alloc>
+	bool operator<= ( const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right);
 
-	template <class Type, class Allocator = std::allocator<Type> >
-	bool operator>= ( const ft::vector<Type, Allocator>& left, const ft::vector<Type, Allocator>& right);
+	template <class T, class Alloc>
+	bool operator>= ( const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right);
 
-	template <class Type, class Allocator = std::allocator<Type> >
-	void swap ( ft::vector<Type, Allocator>& left, ft::vector<Type, Allocator>& right);
+	template <class T, class Alloc>
+	void swap ( ft::vector<T, Alloc>& left, ft::vector<T, Alloc>& right);
 	
 } // namespace ft
-*/
+
 #endif

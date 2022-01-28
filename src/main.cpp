@@ -93,5 +93,6 @@ void test_compare() {
 int main() {
 
 	test_compare();
+	test_pair();
 	return 0;
 }
