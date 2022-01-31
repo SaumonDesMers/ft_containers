@@ -1,20 +1,20 @@
 #include <iostream>
 #include <string>
 #include <deque>
-#ifdef STD
+// #ifdef STD
 	#include <map>
 	#include <stack>
 	#include <vector>
 	#include <utility>
 	#include <algorithm>
-	namespace ft = std;
-#else
+	// namespace ft = std;
+// #else
 	#include <map.hpp>
 	#include <stack.hpp>
 	#include <vector.hpp>
 	#include <utils.hpp>
 	#include <pair.hpp>
-#endif
+// #endif
 
 void test_pair() {
 
@@ -90,9 +90,20 @@ void test_compare() {
 		
 }
 
+void test_vector() {
+	std::vector<int> vec(12, 3);
+
+	ft::vector<int> myVector1(vec.begin(), vec.end());
+	myVector1.debug();
+
+	ft::vector<float> myVector2(12);
+	myVector2.debug();
+}
+
 int main() {
 
-	test_compare();
-	test_pair();
+	// test_compare();
+	// test_pair();
+	test_vector();
 	return 0;
 }
