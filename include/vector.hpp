@@ -5,6 +5,7 @@
 #include <iterator.hpp>
 #include <iterator>
 #include <exception>
+#include <utils.hpp>
 
 namespace ft
 {
@@ -13,18 +14,18 @@ namespace ft
 
 		public:
 
-			typedef T												value_type;
-			typedef Alloc											allocator_type;
-			typedef typename std::size_t							size_type;
-			typedef typename std::ptrdiff_t							difference_type;
-			typedef value_type&										reference;
-			typedef const value_type&								const_reference;
-			typedef typename Alloc::pointer							pointer;
-			typedef typename Alloc::const_pointer					const_pointer;
-			// typedef typename std::iterator<iterator>				iterator;
-			// typedef typename std::iterator<const_iterator>			const_iterator;
-			// typedef typename std::reverse_iterator<iterator>		reverse_iterator;
-			// typedef typename std::reverse_iterator<const_iterator>	const_reverse_iterator;
+			typedef T														value_type;
+			typedef Alloc													allocator_type;
+			typedef typename std::size_t									size_type;
+			typedef typename std::ptrdiff_t									difference_type;
+			typedef value_type&												reference;
+			typedef const value_type&										const_reference;
+			typedef typename Alloc::pointer									pointer;
+			typedef typename Alloc::const_pointer							const_pointer;
+			typedef typename ft::iterator<bidirectional_iterator_tag, T>	iterator;
+			// typedef typename ft::iterator<const_iterator>					const_iterator;
+			// typedef typename ft::reverse_iterator<iterator>					reverse_iterator;
+			// typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 
 		private:
 
@@ -48,7 +49,7 @@ namespace ft
 				_size = 0;
 				_capacity = 0;
 				_arr = _alloc.allocate(_capacity);
-				_alloc.construct(_arr, value_type());
+				// _alloc.construct(_arr, value_type());
 			}
 
 			explicit vector(size_type n, const_reference val = value_type(), const allocator_type& alloc = allocator_type()) {
@@ -60,8 +61,8 @@ namespace ft
 					_alloc.construct(&_arr[i], val);
 			}
 
-			template <class InputIterator>
-        	vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) {
+			template <class It>
+        	vector(It first, typename ft::enable_if<!ft::is_integral<It>::value, It>::type last, const allocator_type& alloc = allocator_type()) {
 				_alloc = alloc;
 				_size = std::distance(first, last);
 				_capacity = _size;
@@ -96,6 +97,8 @@ namespace ft
 				return *this;
 			}
 
+			//###########################################################
+
 			size_type size() const { return _size; }
 
 			bool empty() const { return _size == 0; }
@@ -106,40 +109,18 @@ namespace ft
 
 			allocator_type get_allocator() const { return _alloc; }
 
-			void reserve(size_type new_cap) {
-				if (new_cap > max_size())
-					throw std::length_error("vector::reserve");
-				if (new_cap > _capacity) {
-					vector tmp = *this;
-					clear();
-					_alloc.deallocate(_arr, _capacity);
-					_capacity = new_cap;
-					_arr = _alloc.allocate(_capacity);
-					_size = tmp.size();
-					for (size_type i=0; i<tmp.size(); i++)
-						_alloc.construct(&_arr[i], tmp[i]);
-				}
-			}
-
-			void clear() {
-				for (size_type i=0; i<_size; i++)
-					_alloc.destroy(&_arr[i]);
-				_size = 0;
-			}
-
-			void push_back(const_reference value) {
-				if (_size == _capacity)
-					reserve(_capacity == 0 ? 1 : _capacity * 2);
-				_alloc.construct(&_arr[_size++], value);
-			}
+			//###########################################################
 
 			reference operator[](size_type pos) { return _arr[pos]; }
 
 			const_reference operator[](size_type pos) const { return _arr[pos]; }
 
 			reference at(size_type pos) {
+				std::string str;
 				if (pos < 0 || pos > _size)
-					throw std::out_of_range("vector::at");
+					throw std::out_of_range("vector::_M_range_check: __n (which is "
+					+ stoa(pos) + ") >= this->size() (which is "
+					+ stoa(_size) + ")");
 				return _arr[pos];
 			}
 
@@ -161,14 +142,113 @@ namespace ft
 
 			const T* data() const;
 
-			void debug() {
-				std::cout << "\n_arr: ";
-				for (size_type i=0; i<_size; i++)
-					std::cout << _arr[i] << ", ";
-				std::cout << "\n_size: " << _size << std::endl;
-				std::cout << "_capacity: " << _capacity << std::endl;
-				std::cout << std::endl;
+			//###########################################################
+
+			void reserve(size_type new_cap) {
+				if (new_cap > max_size())
+					throw std::length_error("vector::reserve");
+				else if (new_cap > _capacity) {
+					vector tmp = *this;
+					clear();
+					_alloc.deallocate(_arr, _capacity);
+					_capacity = new_cap;
+					_arr = _alloc.allocate(_capacity);
+					_size = tmp.size();
+					for (size_type i=0; i<tmp.size(); i++)
+						_alloc.construct(&_arr[i], tmp[i]);
+				}
 			}
+
+			void resize(size_type count, value_type value = value_type()) {
+				try {
+					if (count > _capacity)
+						reserve(std::max(_size * 2, count));
+					while (_size < count) {
+						_alloc.destroy(&_arr[_size]);
+						_alloc.construct(&_arr[_size++], value);
+					}
+					_size = count;
+				} catch (const std::exception& e) {
+					throw std::length_error("vector::_M_fill_insert");
+				}
+			}
+
+			void clear() {
+				for (size_type i=0; i<_size; i++)
+					_alloc.destroy(&_arr[i]);
+				_size = 0;
+			}
+
+			//###########################################################
+
+			void push_back(const_reference value) {
+				if (_size == _capacity)
+					reserve(_capacity == 0 ? 1 : _capacity * 2);
+				_alloc.construct(&_arr[_size++], value);
+			}
+
+			void pop_back() {
+				_alloc.destroy(&_arr[--_size]);
+			}
+
+			void swap(vector& other) {
+				ft::vector<value_type, allocator_type> tmp(*this);
+				*this = other;
+				other = tmp;
+			}
+
+			void assign(size_type count, const_reference value) {
+				try {
+					if (count > _capacity)
+						reserve(count);
+					clear();
+					for (size_type i=0; i<count; i++)
+						_alloc.construct(&_arr[i], value);
+					_size = count;
+				} catch (const std::exception& e) {
+					throw std::length_error("cannot create std::vector larger than max_size()");
+				}
+			}
+
+			template<class It>
+			void assign(It first, typename ft::enable_if<!ft::is_integral<It>::value, It>::type last) {
+				try {
+					size_type count = std::distance(first, last);
+					if (count > _capacity)
+						reserve(count);
+					clear();
+					for (It it=first; it!=last; it++)
+						_alloc.construct(&_arr[_size++], *it);
+				} catch (const std::exception& e) {
+					throw std::length_error("cannot create std::vector larger than max_size()");
+				}
+			}
+
+			// iterator insert(iterator pos, const value_type& value) {
+			// 	try {
+			// 		if (_size + 1 > _capacity)
+			// 			reserve(_size * 2);
+			// 		for (iterator it=pos; it!=end(); it++)
+
+			// 		_size++;
+			// 	} catch (const std::exception& e) {
+			// 		throw std::length_error("vector::_M_fill_insert");
+			// 	}
+			// }
+
+			// void insert(iterator pos, size_type count, const T& value) {
+
+			// }
+
+			// template<class InputIt>
+			// void insert(iterator pos, InputIt first, InputIt last) {
+
+			// }
+
+			iterator begin() {
+				return iterator(_arr);
+			}
+
 	};
 
 	template <class T, class Alloc>

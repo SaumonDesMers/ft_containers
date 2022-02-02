@@ -1,6 +1,8 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
+#include <sstream>
+
 namespace ft
 {
 	//########################################################################
@@ -61,7 +63,7 @@ namespace ft
 	//########################################################################
 
 	template <class Iter1, class Iter2>
-	bool equal ( Iter1 first1, Iter1 last1, Iter2 first2 ) {
+	bool equal(Iter1 first1, Iter1 last1, Iter2 first2) {
 		while (first1!=last1) {
 			if (!(*first1 == *first2))
 				return false;
@@ -71,7 +73,7 @@ namespace ft
 	}
 
 	template <class Iter1, class Iter2, class Compare>
-	bool equal ( Iter1 first1, Iter1 last1, Iter2 first2, Compare comp ) {
+	bool equal(Iter1 first1, Iter1 last1, Iter2 first2, Compare comp) {
 		while (first1!=last1) {
 			if (!comp(*first1, *first2))
 				return false;
@@ -80,6 +82,14 @@ namespace ft
 		return true;
 	}
 
+	template<class T>
+	std::string stoa(T n) {
+		std::stringstream out;
+		out << n;
+		return out.str();
+	}
+
 } // namespace ft
+
 
 #endif
