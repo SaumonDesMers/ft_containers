@@ -22,7 +22,8 @@ namespace ft
 			typedef const value_type&										const_reference;
 			typedef typename Alloc::pointer									pointer;
 			typedef typename Alloc::const_pointer							const_pointer;
-			typedef typename ft::iterator<bidirectional_iterator_tag, T>	iterator;
+			// typedef typename ft::iterator<random_access_iterator_tag, T>	iterator;
+			typedef T*	iterator;
 			// typedef typename ft::iterator<const_iterator>					const_iterator;
 			// typedef typename ft::reverse_iterator<iterator>					reverse_iterator;
 			// typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
@@ -245,9 +246,9 @@ namespace ft
 
 			// }
 
-			iterator begin() {
-				return iterator(_arr);
-			}
+			iterator begin() { return iterator(_arr); }
+
+			iterator end() { return iterator(&_arr[_size]); }
 
 	};
 

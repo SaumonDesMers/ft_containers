@@ -138,11 +138,13 @@ void test_insert() {
 }
 
 void test_iterator() {
-	ft::vector<int> v(10);
+	ft::vector<int> v(10, 3);
 
-	ft::vector<int>::iterator it = v.begin();
-
-	std::cout << "*it = " << *it << std::endl;
+	int i = 0;
+	for (ft::vector<int>::iterator it = v.begin(); it!=v.end(); it++) {
+		*(it + 1) = i++;
+		std::cout << *it << std::endl;
+	}
 }
 
 int main() {
@@ -155,7 +157,8 @@ int main() {
 	// test_pop_back();
 	// test_swap();
 	// test_assign();
-	test_insert();
+	// test_insert();
+	test_iterator();
 
 	return 0;
 }
