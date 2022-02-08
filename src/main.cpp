@@ -129,23 +129,43 @@ void test_assign() {
 
 void test_insert() {
 	ft::vector<int> v(10, 3);
-	// std::deque<int> d(10, 9);
+	std::deque<int> d(10, 9);
 
-	// ft::vector<int>::iterator it = v.begin();
-
-	// v.insert(it + 2, 4);
+	v.insert(v.begin() + 2, 4);
+	debug(v);
+	v.insert(v.begin() + 5, 4, 5);
+	debug(v);
+	v.insert(v.begin() + 8, d.begin(), d.end());
 	debug(v);
 }
 
 void test_iterator() {
-	ft::vector<int> v(10, 3);
+	// ft::vector<int> v(10, 3);
 
-	int i = 0;
-	for (ft::vector<int>::iterator it = v.begin(); it!=v.end(); it++) {
-		*(it + 1) = i++;
-		std::cout << *it << std::endl;
-	}
+	// int i = 0;
+	// for (ft::vector<int>::iterator it = v.begin(); it!=v.end(); it++) {
+	// 	*it = i++;
+	// 	std::cout << *it << std::endl;
+	// }
+	// for (ft::vector<int>::reverse_iterator rev_it = v.rbegin(); rev_it!=v.rend(); rev_it++)
+	// 	std::cout << *rev_it << std::endl;
+	
+	ft::vector<int>    myvec;
+    for (size_t i = 0; i < 13; i++)
+        myvec.push_back(i + 42);
+    ft::vector<int>::const_iterator    it = myvec.begin();
+    std::cout << "FIRST: " << *it << std::endl;
+    for (; it != myvec.end(); it++)
+        std::cout << *it << " ";
+    std::cout << std::endl;
+    ft::vector<int>::reverse_iterator    rit = myvec.rbegin();
+    for (; rit != myvec.rend(); rit++)
+        std::cout << *rit << " ";
+    std::cout << std::endl;
+    ft::vector<int>::const_reverse_iterator test = myvec.rend();
+    (void)test;
 }
+
 
 int main() {
 
