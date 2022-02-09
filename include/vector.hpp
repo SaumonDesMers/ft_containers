@@ -115,8 +115,8 @@ namespace ft
 				std::string str;
 				if (pos < 0 || pos > _size)
 					throw std::out_of_range("vector::_M_range_check: __n (which is "
-					+ stoa(pos) + ") >= this->size() (which is "
-					+ stoa(_size) + ")");
+					+ itoa(pos) + ") >= this->size() (which is "
+					+ itoa(_size) + ")");
 				return _arr[pos];
 			}
 
@@ -277,6 +277,32 @@ namespace ft
 				}
 			}
 
+			iterator erase(iterator pos) {
+				try {
+					_alloc.destroy(pos);
+					for (iterator it=pos; (it + 1)!=end(); it++)
+						*it = *(it + 1);
+					_size--;
+					return pos;
+				} catch (const std::exception& e) {
+					throw;
+				}
+			}
+
+			iterator erase(iterator first, iterator last) {
+				try {
+					for (iterator it=first; it!=last; it++)
+						_alloc.destroy(it);
+					size_type offset = ft::distance(first, last);
+					for (iterator it=first; (it + offset)!=end(); it++)
+						*it = *(it + offset);
+					_size -= offset;
+					return ++first;
+				} catch (const std::exception& e) {
+					throw;
+				}
+			}
+
 			iterator begin() { return iterator(_arr); }
 			iterator end() { return iterator(&_arr[_size]); }
 
@@ -292,34 +318,22 @@ namespace ft
 	};
 
 	template <class T, class Alloc>
-	bool operator==(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) {
-		return lexicographical_compare(left.first(), left.end(), right.first(), right.last());
-	}
+	bool operator==(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) { return ft::equal(left.begin(), left.end(), right.begin()); }
 
 	template <class T, class Alloc>
-	bool operator!=(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) {
-		return lexicographical_compare(left.first(), left.end(), right.first(), right.last());
-	}
+	bool operator!=(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) { return !(left == right); }
 
 	template <class T, class Alloc>
-	bool operator<(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) {
-		return lexicographical_compare(left.first(), left.end(), right.first(), right.last());
-	}
+	bool operator<(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) { return ft::lexicographical_compare(left.begin(), left.end(), right.begin(), right.end()); }
 
 	template <class T, class Alloc>
-	bool operator>(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) {
-		return lexicographical_compare(left.first(), left.end(), right.first(), right.last());
-	}
+	bool operator>(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) { return ft::lexicographical_compare(right.begin(), right.end(), left.begin(), left.end()); }
 
 	template <class T, class Alloc>
-	bool operator<=(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) {
-		return lexicographical_compare(left.first(), left.end(), right.first(), right.last());
-	}
+	bool operator<=(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) { return !(left>right); }
 
 	template <class T, class Alloc>
-	bool operator>=(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) {
-		return lexicographical_compare(left.first(), left.end(), right.first(), right.last());
-	}
+	bool operator>=(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) { return !(left<right); }
 
 	template <class T, class Alloc>
 	void swap(ft::vector<T, Alloc>& left, ft::vector<T, Alloc>& right) {

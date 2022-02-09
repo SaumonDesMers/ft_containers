@@ -1,8 +1,6 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
-#include <sstream>
-
 namespace ft
 {
 	//########################################################################
@@ -82,14 +80,6 @@ namespace ft
 		return true;
 	}
 
-	template<class T>
-	std::string stoa(T n) {
-		std::stringstream out;
-		out << n;
-		return out.str();
-	}
-
 } // namespace ft
-
 
 #endif
