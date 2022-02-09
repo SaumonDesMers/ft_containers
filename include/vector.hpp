@@ -7,6 +7,7 @@
 #include <iterator>
 #include <exception>
 #include <utils.hpp>
+#include <other.hpp>
 
 namespace ft
 {
@@ -188,9 +189,10 @@ namespace ft
 			}
 
 			void swap(vector& other) {
-				ft::vector<value_type, allocator_type> tmp(*this);
-				*this = other;
-				other = tmp;
+				std::swap(_arr, other._arr);
+				std::swap(_size, other._size);
+				std::swap(_capacity, other._capacity);
+				std::swap(_alloc, other._alloc);
 			}
 
 			void assign(size_type count, const_reference value) {
@@ -297,7 +299,7 @@ namespace ft
 					for (iterator it=first; (it + offset)!=end(); it++)
 						*it = *(it + offset);
 					_size -= offset;
-					return ++first;
+					return first;
 				} catch (const std::exception& e) {
 					throw;
 				}
@@ -318,7 +320,7 @@ namespace ft
 	};
 
 	template <class T, class Alloc>
-	bool operator==(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) { return ft::equal(left.begin(), left.end(), right.begin()); }
+	bool operator==(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) { return ft::equal(left.begin(), left.end(), right.begin()) && left.size() == right.size(); }
 
 	template <class T, class Alloc>
 	bool operator!=(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) { return !(left == right); }

@@ -145,7 +145,7 @@ void test_erase() {
 	debug(v);
 	v.erase(v.begin() + 3, v.begin() + 7);
 	debug(v);
-	v.erase(v.begin() + 2);
+	v.erase(v.begin(), v.begin() + 3);
 	debug(v);
 }
 
@@ -172,14 +172,14 @@ void test_operator() {
 
 void test_vector() {
 
-	test_push_back();
-	test_reserve();
-	test_resize();
-	test_pop_back();
-	test_swap();
-	test_assign();
-	test_insert();
-	test_iterator();
+	// test_push_back();
+	// test_reserve();
+	// test_resize();
+	// test_pop_back();
+	// test_swap();
+	// test_assign();
+	// test_insert();
+	// test_iterator();
 	test_erase();
-	test_operator();
+	// test_operator();
 }
