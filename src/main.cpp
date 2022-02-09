@@ -2,6 +2,6 @@
 
 int main() {
 
-	test_vector();
+	test_stack();
 	return 0;
 }

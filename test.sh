@@ -1,6 +1,7 @@
 cpp_version="-std=c++98"
 flags="-Wall -Werror -Wextra -g"
-src="src/main.cpp src/test_vector.cpp"
+src="src/main.cpp src/test_vector.cpp src/test_stack.cpp"
+valgrind="valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --show-reachable=yes --log-file=valgrind.log"
 
 if [ "$1" = "ft" ]
 then
@@ -10,12 +11,12 @@ then
 	c++ $flags $cpp_version -I include -D STD $src -o std_containers
 elif [ "$1" = "rm" ]
 then
-	rm ft_containers std_containers ft_output std_output
+	rm ft_containers std_containers ft_output std_output valgrind.log
 elif [ "$1" = "diff" ]
 then
-	./ft_containers > ft_output
-	./std_containers > std_output
-	diff ft_output std_output
+	$valgrind ./ft_containers > ft_output
+	$valgrind ./std_containers > std_output
+	diff -y ft_output std_output
 else
 	$0 ft
 	$0 std

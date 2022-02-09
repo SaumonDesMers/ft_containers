@@ -22,5 +22,6 @@
 #endif
 
 void test_vector();
+void test_stack();
 
 #endif

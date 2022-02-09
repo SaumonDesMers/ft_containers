@@ -24,7 +24,7 @@ namespace ft
 
 			pointer ptr() const { return _ptr; }
 		
-			reverse_iterator(iterator_type const &it) { _ptr = it; }
+			reverse_iterator(iterator_type const &it) { _ptr = it - 1; }
 			template <class Iter>
 			reverse_iterator (reverse_iterator<Iter> const &rev_it) : _ptr(rev_it.ptr()) {}
 			~reverse_iterator() {}
