@@ -50,42 +50,6 @@ namespace ft
 			typedef Distance	difference_type;
 			typedef Pointer		pointer;
 			typedef Reference	reference;
-
-		// private:
-
-		// 	pointer _ptr;
-		
-		// public:
-
-		// 	iterator(pointer const &ptr) { _ptr = ptr; }
-		// 	iterator(iterator const &it) { _ptr = it._ptr; }
-		// 	~iterator() {}
-		// 	iterator operator=(iterator const &it) { _ptr = it._ptr; return *this; }
-
-		// 	iterator operator++() { _ptr++; return *this; }
-		// 	iterator operator++(int) { iterator old(*this); _ptr++; return old; }
-
-		// 	bool operator==(iterator const &it) { return _ptr == it._ptr; }
-		// 	bool operator!=(iterator const &it) { return _ptr != it._ptr; }
-
-		// 	reference operator*() { return *_ptr; }
-		// 	reference operator->() { return *_ptr; }
-		// 	reference operator[](difference_type const &x) { return *(_ptr + x); }
-
-		// 	iterator operator--() { _ptr--; return *this; }
-		// 	iterator operator--(int) { iterator old(*this); _ptr--; return old; }
-
-		// 	iterator operator+(difference_type const &x) { iterator ret(*this); ret._ptr += x; return ret; }
-		// 	iterator operator-(difference_type const &x) { iterator ret(*this); ret._ptr -= x; return ret; }
-		// 	iterator operator-(iterator const &it) { iterator ret(*this); ret._ptr -= it._ptr; return ret; }
-
-		// 	bool operator<(iterator const &it) { return _ptr < it._ptr; }
-		// 	bool operator>(iterator const &it) { return _ptr > it._ptr; }
-		// 	bool operator<=(iterator const &it) { return _ptr <= it._ptr; }
-		// 	bool operator>=(iterator const &it) { return _ptr >= it._ptr; }
-
-		// 	iterator operator+=(difference_type const &x) { _ptr += x; return *this; }
-		// 	iterator operator-=(difference_type const &x) { _ptr -= x; return *this; }
 	};
 
 	template <class Category, class T, class Distance = std::ptrdiff_t, class Pointer = T*, class Reference = T&>
@@ -96,42 +60,6 @@ namespace ft
 			typedef Distance		difference_type;
 			typedef Pointer			pointer;
 			typedef const Reference	reference;
-
-		// private:
-
-		// 	pointer _ptr;
-		
-		// public:
-
-		// 	const_iterator(pointer const &ptr) { _ptr = ptr; }
-		// 	const_iterator(const_iterator const &it) { _ptr = it._ptr; }
-		// 	~const_iterator() {}
-		// 	const_iterator operator=(const_iterator const &it) { _ptr = it._ptr; return *this; }
-
-		// 	const_iterator operator++() { _ptr++; return *this; }
-		// 	const_iterator operator++(int) { const_iterator old(*this); _ptr++; return old; }
-
-		// 	bool operator==(const_iterator const &it) { return _ptr == it._ptr; }
-		// 	bool operator!=(const_iterator const &it) { return _ptr != it._ptr; }
-
-		// 	reference operator*() { return *_ptr; }
-		// 	reference operator->() { return *_ptr; }
-		// 	reference operator[](difference_type const &x) { return *(_ptr + x); }
-
-		// 	const_iterator operator--() { _ptr--; return *this; }
-		// 	const_iterator operator--(int) { const_iterator old(*this); _ptr--; return old; }
-
-		// 	const_iterator operator+(difference_type const &x) { const_iterator ret(*this); ret._ptr += x; return ret; }
-		// 	const_iterator operator-(difference_type const &x) { const_iterator ret(*this); ret._ptr -= x; return ret; }
-		// 	const_iterator operator-(const_iterator const &it) { const_iterator ret(*this); ret._ptr -= it._ptr; return ret; }
-
-		// 	bool operator<(const_iterator const &it) { return _ptr < it._ptr; }
-		// 	bool operator>(const_iterator const &it) { return _ptr > it._ptr; }
-		// 	bool operator<=(const_iterator const &it) { return _ptr <= it._ptr; }
-		// 	bool operator>=(const_iterator const &it) { return _ptr >= it._ptr; }
-
-		// 	const_iterator operator+=(difference_type const &x) { _ptr += x; return *this; }
-		// 	const_iterator operator-=(difference_type const &x) { _ptr -= x; return *this; }
 	};
 
 	template<class InputIt>
