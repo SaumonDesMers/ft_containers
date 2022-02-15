@@ -43,7 +43,7 @@ namespace ft
 			
 	};
 
-	template <class Key, class Type, class Traits = std::less<Key>, class Allocator=std::allocator<ft::pair <const Key, Type>>>
+	template <class Key, class Type, class Traits = std::less<Key>, class Allocator=std::allocator<ft::pair<const Key, Type>>>
 	class map {
 
 		public:
@@ -72,8 +72,15 @@ namespace ft
 			allocator_type		_alloc;
 			node_allocator_type	_node_alloc;
 
-			bool operator==(Key const &k1, Kay const &k2) {
-				return !key_compare(k1, k2) && !key_compare(k2, k1);
+			bool operator==(key_type const &k1, key_type const &k2) { return !key_compare(k1, k2) && !key_compare(k2, k1); }
+
+			infix_count(node *current, const key_type& key, int &count) {
+				if (current->left != NULL && !count)
+					infix_count(current->left, key, count);
+				if (key == current->value.first)
+					count = 1;
+				if (current->right != NULL && !count)
+					infix_count(current->right, key, count);
 			}
 
 		public:
@@ -121,7 +128,9 @@ namespace ft
 
 			void swap(map& other);
 
-			size_type count(const key_type& key) const;
+			size_type count(const key_type& key) const {
+				return infix_count(root, key, 0);
+			}
 
 			iterator find(const key_type& key);
 			const_iterator find(const key_type& key) const;
