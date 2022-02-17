@@ -1,3 +1,6 @@
+#ifndef PAIR_HPP
+#define PAIR_HPP
+
 namespace ft
 {
 
@@ -7,8 +10,11 @@ namespace ft
 		T2 second;
 
 		pair() {}
-		pair(const pair<T1,T2>& pr) { *this = pr; }
-		pair(const T1& a, const T2& b) { first = a; second = b; }
+		pair(const pair<T1,T2>& pr) {
+			first = pr.first;
+			second = pr.second; 
+		}
+		pair(const T1& a, const T2& b) : first(a), second(b) {}
 		~pair() {}
 
 		template<class U, class V>
@@ -66,4 +72,4 @@ namespace ft
 
 } // namespace ft
 
-	
+#endif

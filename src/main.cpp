@@ -3,6 +3,7 @@
 int main() {
 
 	// test_stack();
-	test_vector();
+	// test_vector();
+	test_map();
 	return 0;
 }

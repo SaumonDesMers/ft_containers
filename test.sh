@@ -1,6 +1,6 @@
 cpp_version="-std=c++98"
 flags="-Wall -Werror -Wextra -g"
-src="src/main.cpp src/test_vector.cpp src/test_stack.cpp"
+src="src/main.cpp src/test_vector.cpp src/test_stack.cpp src/test_map.cpp"
 valgrind="valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --show-reachable=yes --log-file=valgrind.log"
 
 if [ "$1" = "ft" ]
