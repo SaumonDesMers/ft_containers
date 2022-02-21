@@ -11,9 +11,22 @@ void test_map() {
 
 	ft::map<int, std::string> m;
 
-	debug(m);
-
 	m[5] = "salut";
+	m[3] = "coucou";
+	m[7] = "hey";
+	m[1] = "yo";
+	m[4] = "bonjour";
 
-	std::cout << m[5] << std::endl;
+	try
+	{
+		std::cout << "map.at(7) = " << m.at(7) << std::endl;
+		std::cout << "map.at(10) = " << m.at(10) << std::endl;
+	}
+	catch(const std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+
+	m.print();
+
 }

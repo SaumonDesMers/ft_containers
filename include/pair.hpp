@@ -10,10 +10,7 @@ namespace ft
 		T2 second;
 
 		pair() {}
-		pair(const pair<T1,T2>& pr) {
-			first = pr.first;
-			second = pr.second; 
-		}
+		pair(const pair<T1,T2>& pr) :first(pr.first), second(pr.second) {}
 		pair(const T1& a, const T2& b) : first(a), second(b) {}
 		~pair() {}
 
