@@ -97,7 +97,7 @@ namespace ft
 			allocator_type		_alloc;
 			node_allocator_type	_node_alloc;
 
-			key_compare			comp;
+			key_compare			_comp;
 
 			// bool operator==(key_type const &k1, key_type const &k2) { return !comp(k1, k2) && !comp(k2, k1); std::cout << "test" << std::endl; }
 
@@ -120,7 +120,7 @@ namespace ft
 				while (current) {
 					if (key == current->value.first)
 						return current->value.second;
-					else if (comp(key, current->value.first))
+					else if (_comp(key, current->value.first))
 						current = current->left;
 					else
 						current = current->right;
@@ -133,7 +133,7 @@ namespace ft
 				while (current) {
 					if (key == current->value.first)
 						return current->value.second;
-					else if (comp(key, current->value.first))
+					else if (_comp(key, current->value.first))
 						current = current->left;
 					else
 						current = current->right;
@@ -148,7 +148,7 @@ namespace ft
 					parent = current;
 					if (key == current->value.first)
 						return current->value.second;
-					else if (comp(key, current->value.first))
+					else if (_comp(key, current->value.first))
 						current = current->left;
 					else
 						current = current->right;
@@ -196,7 +196,7 @@ namespace ft
 				{
 					if (key == current->value.first)
 						return 1;
-					else if (comp(key, current->value.first))
+					else if (_comp(key, current->value.first))
 						current = current->left;
 					else
 						current = current->right;
@@ -216,7 +216,7 @@ namespace ft
 			iterator upper_bound(const key_type& key);
 			const_iterator upper_bound(const key_type& key) const;
 
-			key_compare key_comp() const;
+			key_compare key_comp() const { return _comp; }
 
 			// ft::map::value_compare value_comp() const;
 
