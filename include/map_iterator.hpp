@@ -3,41 +3,129 @@
 
 #include <iostream>
 #include <utils.hpp>
+#include <map.hpp>
 
 namespace ft
 {
 
-	template <class Category, class T, class Distance = std::ptrdiff_t, class Pointer = T*, class Reference = T&>
+	template <class Key, class Type, class Traits, class Allocator>
+	class map;
+
+	template <class T, class Key, class Type, class Traits, class Allocator>
 	struct map_iterator {
 
-			typedef Category	iterator_category;
-			typedef T			value_type;
-			typedef Distance	difference_type;
-			typedef Pointer		pointer;
-			typedef Reference	reference;
+			typedef bidirectional_iterator_tag									iterator_category;
+			typedef T															node_type;
+			typedef typename node_type::value_type								value_type;
+			typedef typename std::ptrdiff_t										difference_type;
+			typedef T*															node_pointer;
+			typedef T&															node_reference;
+			typedef typename ft::map<Key, Type, Traits, Allocator>::key_compare	key_compare;
+			typedef value_type*													pointer;
+			typedef value_type&													reference;
+
 
 		private:
 
-			pointer _ptr;
+			node_pointer 	_node;
+			key_compare		_comp;
+			node_pointer	_leaf;
 
 		public:
 
-			map_iterator(pointer const &ptr = pointer()) : _ptr(ptr) {}
-			map_iterator (map_iterator const &mit) :_ptr(mit._ptr) {}
+			map_iterator(node_pointer const &ptr = node_pointer(), node_pointer leaf = NULL)
+				: _node(ptr), _comp(key_compare()), _leaf(leaf) {}
+			
+			map_iterator (map_iterator const &mit)
+				: _node(mit._node), _comp(key_compare()), _leaf(mit._leaf) {}
+			
 			~map_iterator() {}
-			map_iterator operator=(map_iterator const &mit) { _ptr = mit._ptr; return *this; }
 
-			map_iterator operator++() { _ptr++; return *this; }
-			map_iterator operator++(int) { return map_iterator(_ptr++); }
+			map_iterator operator=(map_iterator const &mit) { _node = mit._node; return *this; }
 
-			bool operator==(map_iterator const &mit) { return _ptr == mit._ptr; }
-			bool operator!=(map_iterator const &mit) { return _ptr != mit._ptr; }
+			bool operator==(map_iterator const &mit) { return _node == mit._node; }
+			bool operator!=(map_iterator const &mit) { return _node != mit._node; }
 
-			reference operator*() { return *_ptr; }
-			pointer operator->() { return &(operator*()); }
+			value_type& operator*() { return _node->value; }
+			value_type* operator->() { return &(operator*()); }
 
-			map_iterator operator--() { _ptr--; return *this; }
-			map_iterator operator--(int) { return map_iterator(_ptr--); }
+			map_iterator operator++() {
+				if (_node->right != _leaf) {
+					_node = _node->right;
+					while (_node->left != _leaf)
+						_node = _node->left;
+				}
+				else {
+					Key key = _node->value.first;
+					while (_node->parent && _comp(_node->parent->value.first, key))
+						_node = _node->parent;
+					if (_node->parent == NULL) {
+						_node = _leaf;
+						return *this;
+					}
+					_node = _node->parent;
+				}
+				return *this;
+			}
+
+			map_iterator operator++(int) {
+				node_pointer tmp = _node;
+				if (_node->right != _leaf) {
+					_node = _node->right;
+					while (_node->left != _leaf)
+						_node = _node->left;
+				}
+				else {
+					Key key = _node->value.first;
+					while (_node->parent && _comp(_node->parent->value.first, key))
+						_node = _node->parent;
+					if (_node->parent == NULL) {
+						_node = _leaf;
+						return map_iterator(tmp, _leaf);
+					}
+					_node = _node->parent;
+				}
+				return map_iterator(tmp, _leaf);
+			}
+
+			map_iterator operator--() {
+				if (_node->left != _leaf) {
+					_node = _node->left;
+					while (_node->right != _leaf)
+						_node = _node->right;
+				}
+				else {
+					Key key = _node->value.first;
+					while (_node->parent && _comp(key, _node->parent->value.first))
+						_node = _node->parent;
+					if (_node->parent == NULL) {
+						_node = _leaf;
+						return *this;
+					}
+					_node = _node->parent;
+				}
+				return *this;
+			}
+
+			map_iterator operator--(int) {
+				node_pointer tmp = _node;
+				if (_node->left != _leaf) {
+					_node = _node->left;
+					while (_node->right != _leaf)
+						_node = _node->right;
+				}
+				else {
+					Key key = _node->value.first;
+					while (_node->parent && _comp(key, _node->parent->value.first))
+						_node = _node->parent;
+					if (_node->parent == NULL) {
+						_node = _leaf;
+						return map_iterator(tmp, _leaf);
+					}
+					_node = _node->parent;
+				}
+				return map_iterator(tmp, _leaf);
+			}
 
 	};
 

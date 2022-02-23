@@ -8,25 +8,27 @@ void debug(ft::map<T, Container>& s) {
 }
 
 void test_map() {
+	typedef ft::map<int, std::string>	map;
+	typedef ft::map<int, std::string>::iterator	iterator;
 
-	ft::map<int, std::string> m;
+	map m;
 
 	m[5] = "salut";
 	m[3] = "coucou";
 	m[7] = "hey";
 	m[1] = "yo";
 	m[4] = "bonjour";
+	m[6] = "mdr";
+	m[9] = "lol";
 
-	try
-	{
-		std::cout << "map.at(7) = " << m.at(7) << std::endl;
-		std::cout << "map.at(10) = " << m.at(10) << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
-	}
+	// m.print();
 
-	m.print();
+	for (iterator it = m.begin(); it != m.end(); it++);
+		// std::cout << "Key = " << it->first << "  Value = " << it->second << std::endl;
+
+	map m2(m.begin(), m.end());
+
+	for (iterator it = m2.begin(); it != m2.end(); it++)
+		std::cout << "Key = " << it->first << "  Value = " << it->second << std::endl;
 
 }
