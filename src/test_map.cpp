@@ -1,34 +1,69 @@
 #include <include.hpp>
 
-template<class T, class Container>
-void debug(ft::map<T, Container>& s) {
+template<class Key, class Value>
+void debug(ft::map<Key, Value>& m) {
 	std::cout << std::endl;
-	std::cout << "size: " << s.size() << std::endl;
+	for (typename ft::map<Key, Value>::iterator it = m.begin(); it != m.end(); it++)
+		std::cout << "Key = " << it->first << "  Value = " << it->second << std::endl;
+	std::cout << std::endl;
+}
+
+template<class ImputIt>
+void debug(ImputIt first, ImputIt last) {
+	std::cout << std::endl;
+	for (ImputIt it = first; it != last; it++)
+		std::cout << "Key = " << it->first << "  Value = " << it->second << std::endl;
+	std::cout << std::endl;
+}
+
+void test_swap() {
+	typedef ft::map<int, std::string>	map;
+
+	map m1;
+
+	m1[5] = "salut";
+	m1[3] = "coucou";
+	m1[7] = "hey";
+	m1[1] = "yo";
+
+	map::iterator m_it = m1.begin();
+	map::iterator m_ite = m1.end();
+
+	map m2;
+
+	m2[4] = "bonjour";
+	m2[6] = "mdr";
+	m2[9] = "lol";
+
+	map::iterator m2_it = m2.begin();
+	map::iterator m2_ite = m2.end();
+
+	std::cout << "M1" << std::endl;
+	debug(m_it, m_ite);
+	std::cout << std::endl;
+
+	std::cout << "M2" << std::endl;
+	debug(m2_it, m2_ite);
+
+	std::cout << "Swap" << std::endl;
+	std::cout << std::endl;
+	m1.swap(m2);
+
+	std::cout << "M1" << std::endl;
+	std::cout << "with old iterator" << std::endl;
+	debug(m_it, m_ite);
+	std::cout << "with swaped map" << std::endl;
+	debug(m1);
+	std::cout << std::endl;
+
+	std::cout << "M2" << std::endl;
+	std::cout << "with old iterator" << std::endl;
+	debug(m2_it, m2_ite);
+	std::cout << "with swaped map" << std::endl;
+	debug(m2);
 	std::cout << std::endl;
 }
 
 void test_map() {
-	typedef ft::map<int, std::string>	map;
-	typedef ft::map<int, std::string>::iterator	iterator;
-
-	map m;
-
-	m[5] = "salut";
-	m[3] = "coucou";
-	m[7] = "hey";
-	m[1] = "yo";
-	m[4] = "bonjour";
-	m[6] = "mdr";
-	m[9] = "lol";
-
-	// m.print();
-
-	for (iterator it = m.begin(); it != m.end(); it++);
-		// std::cout << "Key = " << it->first << "  Value = " << it->second << std::endl;
-
-	map m2(m.begin(), m.end());
-
-	for (iterator it = m2.begin(); it != m2.end(); it++)
-		std::cout << "Key = " << it->first << "  Value = " << it->second << std::endl;
-
+	test_swap();
 }

@@ -14,8 +14,8 @@ then
 	rm ft_containers std_containers ft_output std_output valgrind.log
 elif [ "$1" = "diff" ]
 then
-	$valgrind ./ft_containers > ft_output
 	$valgrind ./std_containers > std_output
+	$valgrind ./ft_containers > ft_output
 	diff -y ft_output std_output
 else
 	$0 ft

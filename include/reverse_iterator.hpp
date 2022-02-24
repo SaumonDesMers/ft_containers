@@ -23,13 +23,13 @@ namespace ft
 
 		public:
 
-			reverse_iterator(iterator_type const &it = iterator_type()) { _it = it - 1; }
+			reverse_iterator(iterator_type const &it = iterator_type()) { _it = it; _it--; }
 			template <class Iter>
-			reverse_iterator (reverse_iterator<Iter> const &rit) { _it = const_cast<iterator_type>(rit.base() - 1); }
+			reverse_iterator (reverse_iterator<Iter> const &rit) { _it = const_cast<iterator_type>(rit.base()); _it--; }
 			~reverse_iterator() {}
 			reverse_iterator operator=(reverse_iterator const &rit) { _it = rit._it; return *this; }
 
-			iterator_type base() const { return iterator_type(_it + 1); }
+			iterator_type base() const { iterator_type ret = _it; ret++; return ret; }
 
 			reverse_iterator operator++() { _it--; return *this; }
 			reverse_iterator operator++(int) { reverse_iterator old(*this); _it--; return old; }

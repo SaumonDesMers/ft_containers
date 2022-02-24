@@ -38,8 +38,8 @@ namespace ft
 			typedef typename Allocator::const_pointer										const_pointer;
 			typedef typename ft::map_iterator<node_type, Key, Type, Traits, Allocator>		iterator;
 			typedef const iterator															const_iterator;
-			typedef typename ft::reverse_iterator<iterator>									reverse_iterator;
-			typedef typename ft::reverse_iterator<const_iterator>							const_reverse_iterator;
+			typedef typename ft::map_reverse_iterator<iterator>								reverse_iterator;
+			typedef typename ft::map_reverse_iterator<const_iterator>						const_reverse_iterator;
 			typedef typename Allocator::template rebind<node<Key, Type, Traits> >::other	node_allocator_type;
 		
 		private:
@@ -49,50 +49,77 @@ namespace ft
 			allocator_type		_alloc;
 			node_allocator_type	_node_alloc;
 
+			node_type*			_end;
+			node_type*			_rend;
+
 			key_compare			_comp;
 
-			node_type			*_leaf;
-
 			// bool operator==(key_type const &k1, key_type const &k2) { return !comp(k1, k2) && !comp(k2, k1); }
+
+			void construct_leaf() {
+				_end = _node_alloc.allocate(1);
+				_node_alloc.construct(_end, node_type(value_type(key_type(), "end"), NULL, node_type::END));
+				_rend = _node_alloc.allocate(1);
+				_node_alloc.construct(_rend, node_type(value_type(key_type(), "rend"), NULL, node_type::REND));
+			}
+
+			void destroy_leaf() {
+				_node_alloc.destroy(_end);
+				_node_alloc.deallocate(_end, 1);
+				_node_alloc.destroy(_rend);
+				_node_alloc.deallocate(_rend, 1);
+			}
 
 		public:
 
 			map() : _root(NULL), _size(0), _alloc(allocator_type()), _node_alloc(node_allocator_type()), _comp(key_compare()) {
-				_leaf = _node_alloc.allocate(1);
-				_node_alloc.construct(_leaf, node_type(value_type(key_type(), mapped_type()), NULL, _leaf, _leaf));
+				construct_leaf();
 			}
 
 			explicit map(const key_compare& comp, const Allocator& alloc = Allocator())
 				: _root(NULL), _size(0), _alloc(alloc), _node_alloc(node_allocator_type()), _comp(comp) {
-				_leaf = _node_alloc.allocate(1);
-				_node_alloc.construct(_leaf, node_type(value_type(key_type(), mapped_type()), NULL, _leaf, _leaf));
+				construct_leaf();
 			}
 			
 			template<class InputIt>
 			map(InputIt first, InputIt last, const key_compare& comp = key_compare(), const Allocator& alloc = Allocator())
-				: _root(NULL), _alloc(alloc), _node_alloc(node_allocator_type()), _comp(comp) {
-				_leaf = _node_alloc.allocate(1);
-				_node_alloc.construct(_leaf, node_type(value_type(key_type(), mapped_type()), NULL, _leaf, _leaf));
-				_size = ft::distance(first, last);
+				: _root(NULL), _size(0), _alloc(alloc), _node_alloc(node_allocator_type()), _comp(comp) {
+				construct_leaf();
 				for (InputIt it = first; it != last; it++)
 					(*this)[it->first] = it->second;
 			}
 
 			map(const map& other) : _root(NULL) {
-				_leaf = _node_alloc.allocate(1);
-				_node_alloc.construct(_leaf, node_type(value_type(key_type(), mapped_type()), NULL, _leaf, _leaf));
-				*this = other;
+				if (other._root) {
+					_root = other._root->clone(NULL);
+					_end = _root;
+					while (_end->type != node_type::END)
+						_end = _end->right;
+					_rend = _root;
+					while (_rend->type != node_type::REND)
+						_rend = _rend->left;
+				}
+				else
+					construct_leaf();
+				_size = other._size;
+				_alloc = other._alloc;
+				_node_alloc = other._node_alloc;
+				_comp = other._comp;
 			}
 
-			~map() {
-				clear();
-				_node_alloc.destroy(_leaf);
-				_node_alloc.deallocate(_leaf, 1);
-			}
+			~map() { clear(); }
 
 			map& operator=(const map& other) {
 				clear();
-				_root = other._root->clone(NULL, _leaf);
+				if (other._root) {
+					_root = other._root->clone(NULL);
+					_end = _root;
+					while (_end->type != node_type::END)
+						_end = _end->right;
+					_rend = _root;
+					while (_rend->type != node_type::REND)
+						_rend = _rend->left;
+				}
 				_size = other._size;
 				_alloc = other._alloc;
 				_node_alloc = other._node_alloc;
@@ -105,7 +132,7 @@ namespace ft
 			mapped_type& operator[](const key_type& key) {
 				node_type *current = _root;
 				node_type *parent = NULL;
-				while (current && current != _leaf) {
+				while (current && current->type == node_type::NODE) {
 					parent = current;
 					if (key == current->value.first)
 						return current->value.second;
@@ -116,14 +143,31 @@ namespace ft
 				}
 
 				node_type *newNode = _node_alloc.allocate(1);
-				_node_alloc.construct(newNode, node_type(value_type(key, mapped_type()), parent, _leaf, _leaf));
-				current = newNode;
-				if (!_root)
-					_root = current;
-				else if (_comp(key, parent->value.first))
-					parent->left = current;
-				else
-					parent->right = current;
+				_node_alloc.construct(newNode, node_type(value_type(key, mapped_type()), parent));
+				if (empty()) {
+					_root = newNode;
+					newNode->left = _rend;
+					newNode->right = _end;
+					_end->parent = _root;
+					_rend->parent = _root;
+				}
+				else {
+					if (current) {
+						current->parent = newNode;
+						if (current->type == node_type::END) {
+							newNode->right = current;
+							parent->right = newNode;
+						}
+						else if (current->type == node_type::REND) {
+							newNode->left = current;
+							parent->left = newNode;
+						}
+					}
+					else if (_comp(key, parent->value.first))
+						parent->left = newNode;
+					else
+						parent->right = newNode;
+				}
 				_size++;
 				return newNode->value.second;
 			}
@@ -137,13 +181,15 @@ namespace ft
 			void clear() {
 				if (_root)
 					_root->destroy();
+				else
+					destroy_leaf();
 				_root = NULL;
 				_size = 0;
 			}
 
 			ft::pair<iterator, bool> insert(const value_type& value);
 			iterator insert(iterator hint, const value_type& value);
-			template<class InputIt>
+			// template<class InputIt>
 			// void insert(InputIt first, InputIt last) {
 			// 	_size += ft::distance(first, last);
 			// 	for (InputIt it = first; it != last; it++)
@@ -153,11 +199,19 @@ namespace ft
 			void erase(iterator pos);
 			void erase(iterator first, iterator last);
 
-			void swap(map_type& other) { std::swap(*this, other); }
+			void swap(map_type& other) {
+				std::swap(_root, other._root);
+				std::swap(_size, other._size);
+				std::swap(_alloc, other._alloc);
+				std::swap(_node_alloc, other._node_alloc);
+				std::swap(_end, other._end);
+				std::swap(_rend, other._rend);
+				std::swap(_comp, other._comp);
+			}
 
 			size_type count(const key_type& key) const {
 				node_type *current = _root;
-				while (current && current != _leaf)
+				while (current && current->type == node_type::NODE)
 				{
 					if (key == current->value.first)
 						return 1;
@@ -187,52 +241,52 @@ namespace ft
 
 			iterator begin() {
 				node_type *node = _root;
-				if (!_root)
+				if (empty())
 					return end();
-				while (node->left != _leaf)
+				while (node->left->type == node_type::NODE)
 					node = node->left;
-				return iterator(node, _leaf);
+				return iterator(node);
 			}
 			const_iterator begin() const {
 				node_type *node = _root;
-				if (!_root)
+				if (empty())
 					return end();
-				while (node->left != _leaf)
+				while (node->left->type == node_type::NODE)
 					node = node->left;
-				return const_iterator(node, _leaf);
+				return const_iterator(node);
 			}
 
-			iterator end() { return iterator(_leaf, _leaf); }
-			const_iterator end() const { return const_iterator(_leaf, _leaf); }
+			iterator end() { return iterator(_end); }
+			const_iterator end() const { return const_iterator(_end); }
 
 			reverse_iterator rbegin() {
 				node_type *node = _root;
-				if (!_root)
+				if (empty())
 					return rend();
-				while (node->right != _leaf)
+				while (node->right->type == node_type::NODE)
 					node = node->right;
-				return reverse_iterator(node, _leaf);
+				return reverse_iterator(iterator(node));
 			}
 			const_reverse_iterator rbegin() const {
 				node_type *node = _root;
-				if (!_root)
+				if (empty())
 					return rend();
-				while (node->right != _leaf)
+				while (node->right->type == node_type::NODE)
 					node = node->right;
-				return const_reverse_iterator(node, _leaf);
+				return const_reverse_iterator(const_iterator(node));
 			}
 
-			reverse_iterator rend() { return reverse_iterator(_leaf, _leaf); }
-			const_reverse_iterator rend() const { return const_reverse_iterator(_leaf, _leaf); }
+			reverse_iterator rend() { return reverse_iterator(iterator(_rend)); }
+			const_reverse_iterator rend() const { return const_reverse_iterator(const_iterator(_rend)); }
 
 			void parkour(node_type *current, std::string const &type) {
 				if (type == "prefixe")
 					log(current);
-				if (current->left != _leaf)
+				if (current->left)
 					parkour(current->left, type);
 				if (type == "infixe")
 					log(current);
-				if (current->right != _leaf)
+				if (current->right)
 					parkour(current->right, type);
 				if (type == "sufixe")
 					log(current);
@@ -242,9 +296,9 @@ namespace ft
 				std::cout << "\nNode < " << node->value.first << ", " << node->value.second << " > (" << node << ")";
 				if (node->parent)
 					std::cout << "\nparent < " << node->parent->value.first << ", " << node->parent->value.second << " > (" << node->parent << ")";
-				if (node->left != _leaf)
+				if (node->left)
 					std::cout << "\nleft < " << node->left->value.first << ", " << node->left->value.second << " > (" << node->left << ")";
-				if (node->right != _leaf)
+				if (node->right)
 					std::cout << "\nright < " << node->right->value.first << ", " << node->right->value.second << " > (" << node->right << ")";
 				std::cout << std::endl;
 			}
