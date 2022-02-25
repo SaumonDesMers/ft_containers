@@ -187,14 +187,23 @@ namespace ft
 				_size = 0;
 			}
 
-			ft::pair<iterator, bool> insert(const value_type& value);
-			iterator insert(iterator hint, const value_type& value);
-			// template<class InputIt>
-			// void insert(InputIt first, InputIt last) {
-			// 	_size += ft::distance(first, last);
-			// 	for (InputIt it = first; it != last; it++)
-			// 		operator[it->first] = it->second;
-			// }
+			ft::pair<iterator, bool> insert(const value_type& value) {
+				size_type flag = count(value.first);
+				(*this)[value.first] = value.second;
+				return ft::make_pair(find(value.first), flag ? true : false);
+			}
+
+			iterator insert(iterator hint, const value_type& value) {
+				(void)hint;
+				(*this)[value.first] = value.second;
+				return find(value.first);
+			}
+
+			template<class InputIt>
+			void insert(InputIt first, InputIt last) {
+				for (InputIt it = first; it != last; it++)
+					(*this)[it->first] = it->second;
+			}
 
 			void erase(iterator pos);
 			void erase(iterator first, iterator last);
@@ -223,17 +232,110 @@ namespace ft
 				return 0;
 			}
 
-			iterator find(const key_type& key);
-			const_iterator find(const key_type& key) const;
+			iterator find(const key_type& key) {
+				node_type *current = _root;
+				while (current && current->type == node_type::NODE) {
+					if (key == current->value.first)
+						return iterator(current);
+					else if (_comp(key, current->value.first))
+						current = current->left;
+					else
+						current = current->right;
+				}
+				return end();
+			}
+
+			const_iterator find(const key_type& key) const {
+				node_type *current = _root;
+				while (current && current->type == node_type::NODE) {
+					if (key == current->value.first)
+						return const_iterator(current);
+					else if (_comp(key, current->value.first))
+						current = current->left;
+					else
+						current = current->right;
+				}
+				return end();
+			}
 
 			ft::pair<iterator,iterator> equal_range(const key_type& key);
 			ft::pair<const_iterator,const_iterator> equal_range(const key_type& key) const;
 
-			iterator lower_bound(const key_type& key);
-			const_iterator lower_bound(const key_type& key) const;
+			iterator lower_bound(const key_type& key) {
+				if (_comp(key, begin()->first))
+					return begin();
+				else if (_comp(rbegin()->first, key))
+					return end();
+				node_type *current = _root;
+				node_type *parent = NULL;
+				while (current && current->type == node_type::NODE) {
+					if (key == current->value.first)
+						return iterator(current);
+					else if (_comp(key, current->value.first)) {
+						parent = current;
+						current = current->left;
+					}
+					else
+						current = current->right;
+				}
+				return iterator(parent);
+			}
 
-			iterator upper_bound(const key_type& key);
-			const_iterator upper_bound(const key_type& key) const;
+			const_iterator lower_bound(const key_type& key) const {
+				if (_comp(key, begin()->first))
+					return begin();
+				else if (_comp(rbegin()->first, key))
+					return end();
+				node_type *current = _root;
+				node_type *parent = NULL;
+				while (current && current->type == node_type::NODE) {
+					if (key == current->value.first)
+						return const_iterator(current);
+					else if (_comp(key, current->value.first)) {
+						parent = current;
+						current = current->left;
+					}
+					else
+						current = current->right;
+				}
+				return const_iterator(parent);
+			}
+
+			iterator upper_bound(const key_type& key) {
+				if (_comp(key, begin()->first))
+					return begin();
+				else if (!_comp(key, rbegin()->first))
+					return end();
+				node_type *current = _root;
+				node_type *parent = NULL;
+				while (current && current->type == node_type::NODE) {
+					if (_comp(key, current->value.first)) {
+						parent = current;
+						current = current->left;
+					}
+					else
+						current = current->right;
+				}
+				return iterator(parent);
+			}
+
+			const_iterator upper_bound(const key_type& key) const {
+				if (_comp(key, begin()->first))
+					return begin();
+				else if (!_comp(key, rbegin()->first))
+					return end();
+				node_type *current = _root;
+				node_type *parent = NULL;
+				while (current && current->type == node_type::NODE) {
+					if (_comp(key, current->value.first)) {
+						parent = current;
+						current = current->left;
+					}
+					else
+						current = current->right;
+				}
+				return const_iterator(parent);
+			}
 
 			key_compare key_comp() const { return _comp; }
 

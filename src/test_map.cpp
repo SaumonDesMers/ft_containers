@@ -16,7 +16,7 @@ void debug(ImputIt first, ImputIt last) {
 	std::cout << std::endl;
 }
 
-void test_swap() {
+void test_swap_map() {
 	typedef ft::map<int, std::string>	map;
 
 	map m1;
@@ -64,6 +64,97 @@ void test_swap() {
 	std::cout << std::endl;
 }
 
+void test_find_map() {
+	typedef ft::map<int, std::string>	map;
+
+	map m;
+
+	m[5] = "salut";
+	m[3] = "coucou";
+	m[7] = "hey";
+	m[1] = "yo";
+	m[4] = "bonjour";
+	m[6] = "mdr";
+	m[9] = "lol";
+
+	map::iterator it;
+	it = m.find(6);
+	if (it != m.end())
+		std::cout << "key 6 is found" << std::endl;
+	else
+		std::cout << "key 6 isn't found" << std::endl;
+
+	it = m.find(11);
+	if (it != m.end())
+		std::cout << "key 11 is found" << std::endl;
+	else
+		std::cout << "key 11 isn't found" << std::endl;
+}
+
+void test_lower_bound_map() {
+	typedef ft::map<int, std::string>	map;
+
+	map m;
+
+	m[5] = "salut";
+	m[3] = "coucou";
+	m[7] = "hey";
+	m[1] = "yo";
+	m[4] = "bonjour";
+	// m[6] = "mdr";
+	m[9] = "lol";
+
+	map::iterator it;
+	for (int i=0; i<11; i++) {
+		it = m.lower_bound(i);
+		std::cout << "lower_bound of " << i << " is " << (it == m.end() ? "end" : itoa(it->first)) << std::endl;
+	}
+}
+
+void test_upper_bound_map() {
+	typedef ft::map<int, std::string>	map;
+
+	map m;
+
+	m[5] = "salut";
+	m[3] = "coucou";
+	m[7] = "hey";
+	m[1] = "yo";
+	m[4] = "bonjour";
+	// m[6] = "mdr";
+	m[9] = "lol";
+
+	map::iterator it;
+	for (int i=0; i<11; i++) {
+		it = m.upper_bound(i);
+		std::cout << "upper_bound of " << i << " is " << (it == m.end() ? "end" : itoa(it->first)) << std::endl;
+	}
+}
+
+void test_insert_map() {
+	typedef ft::map<int, std::string>	map;
+
+	map m;
+
+	m[5] = "salut";
+	m[3] = "coucou";
+	m[7] = "hey";
+	m[1] = "yo";
+	m[4] = "bonjour";
+	m[6] = "mdr";
+	m[9] = "lol";
+
+	map m2;
+
+	m2.insert(m.begin(), m.end());
+
+	debug(m2);
+}
+
 void test_map() {
-	test_swap();
+	// test_swap_map();
+	// test_find_map();
+	// test_lower_bound_map();
+	// test_upper_bound_map();
+	test_insert_map();
 }
