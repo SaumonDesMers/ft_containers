@@ -268,20 +268,34 @@ void test_rel_ope_map() {
 	rel_ope_test(m2, m3, "m2", "m3");
 }
 
-void test_map() {
-	// test_swap_map();
-	// test_find_map();
-	// test_lower_bound_map();
-	// test_upper_bound_map();
-	// test_insert_map();
-	// test_rel_ope_map();
+// void test_erase_map() {
+// 	typedef ft::map<int, std::string>	map;
 
-	typedef ft::map<int, std::string>	map;
+// 	map m;
 
-	map m;
+// 	for (int i=0; i<20; i++)
+// 		m[i] = itoa(i);
+
+// 	map::iterator it = m.begin();
+
+// 	while (it->first != 7)
+// 		it++;
 	
-	for (int i=0; i<20; i++)
-		m[i] = "";
+// 	map m2;
+// 	m2[7] = "test";
+// 	map::iterator it2 = m2.begin();
 
-	m.print();
+// 	m.erase(it2);
+
+// 	debug(m);
+// }
+
+void test_map() {
+	test_swap_map();
+	test_find_map();
+	test_lower_bound_map();
+	test_upper_bound_map();
+	test_insert_map();
+	test_rel_ope_map();
+	// test_erase_map();
 }

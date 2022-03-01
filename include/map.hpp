@@ -129,6 +129,19 @@ namespace ft
 				}
 			}
 
+			node_type *find_node(const key_type &key) {
+				node_type *current = _root;
+				while (current && current->type == node_type::NODE) {
+					if (key == current->value.first)
+						return current;
+					else if (_comp(key, current->value.first))
+						current = current->left;
+					else
+						current = current->right;
+				}
+				return NULL;
+			}
+
 		public:
 
 
@@ -268,6 +281,9 @@ namespace ft
 			}
 
 			void erase(iterator pos);
+
+			size_type erase(const key_type& key);
+
 			void erase(iterator first, iterator last);
 
 			void swap(map_type& other) {
