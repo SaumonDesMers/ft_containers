@@ -142,6 +142,47 @@ namespace ft
 				return NULL;
 			}
 
+			void change_parent(node_type *node, node_type *new_child) {
+				if (node && node->parent) {
+					if (node->parent->left == node)
+						node->parent->left = new_child;
+					else
+						node->parent->right = new_child;
+					if (new_child)
+						new_child->parent = node->parent;
+				}
+			}
+
+			node_type *next(node_type *node) {
+				if (node->right) {
+					node = node->right;
+					while (node->left)
+						node = node->left;
+				}
+				else {
+					Key key = node->value.first;
+					while (node->parent && _comp(node->parent->value.first, key))
+						node = node->parent;
+					node = node->parent;
+				}
+				return node;
+			}
+
+			node_type *previous(node_type *node) {
+				if (node->left) {
+					node = node->left;
+					while (node->right)
+						node = node->right;
+				}
+				else {
+					Key key = node->value.first;
+					while (node->parent && _comp(key, node->parent->value.first) && node->type == node_type::NODE)
+						node = node->parent;
+					node = node->parent;
+				}
+				return node;
+			}
+
 		public:
 
 
@@ -282,7 +323,28 @@ namespace ft
 
 			void erase(iterator pos);
 
-			size_type erase(const key_type& key);
+			size_type erase(const key_type& key) {
+				if (empty())
+					return 0;
+				node_type *to_erase = find_node(key);
+				if (!to_erase->left && !to_erase->right) {
+					change_parent(to_erase, NULL);
+				}
+				else if (to_erase->left && !to_erase->right) {
+					change_parent(to_erase, to_erase->left);
+				}
+				else if (!to_erase->left && to_erase->right) {
+					change_parent(to_erase, to_erase->right);
+				}
+				else {
+					node_type *prev = previous(to_erase);
+					// to_erase->swap(prev);
+					change_parent(prev, prev->left);
+				}
+				_node_alloc.destroy(to_erase);
+				_node_alloc.deallocate(to_erase, 1);
+				return 1;
+			}
 
 			void erase(iterator first, iterator last);
 
