@@ -59,7 +59,7 @@ namespace ft
 			}
 
 			template <class It>
-        	vector(It first, typename ft::enable_if<!ft::is_integral<It>::value, It>::type last, const allocator_type& alloc = allocator_type()) {
+			vector(It first, typename ft::enable_if<!ft::is_integral<It>::value, It>::type last, const allocator_type& alloc = allocator_type()) {
 				_alloc = alloc;
 				_size = std::distance(first, last);
 				_capacity = _size;

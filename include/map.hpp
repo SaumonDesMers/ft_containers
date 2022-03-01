@@ -70,7 +70,67 @@ namespace ft
 				_node_alloc.deallocate(_rend, 1);
 			}
 
+			void left_rotate(node_type *x) {
+				node_type *y = x->right;
+				x->right = y->left;
+				if (y->left)
+					x->right->parent = x;
+				y->parent = x->parent;
+				if (x->parent == NULL)
+					_root = y;
+				else if (x == x->parent->left)
+					x->parent->left = y;
+				else
+					x->parent->right = y;
+				y->left = x;
+				x->parent = y;
+				_root->update_branch_size();
+			}
+
+			void right_rotate(node_type *x) {
+				node_type *y = x->parent;
+				y->left = x->right;
+				if (x->right)
+					y->left->parent = y;
+				x->parent = y->parent;
+				if (y->parent == NULL)
+					_root = x;
+				else if (y == y->parent->left)
+					y->parent->left = x;
+				else
+					y->parent->right = x;
+				x->right = y;
+				y->parent = x;
+				_root->update_branch_size();
+			}
+
+			void left_right_rotate(node_type *x) {
+				left_rotate(x);
+				right_rotate(x->parent);
+			}
+
+			void right_left_rotate(node_type *x) {
+				right_rotate(x->left);
+				left_rotate(x->parent->parent);
+			}
+
+			void rebalance(node_type *node) {
+				node_type *newNode = node;
+				while (node) {
+					if (node->balance() > 1 && newNode->value.first < node->left->value.first)
+						right_rotate(node->left);
+					else if (node->balance() > 1)
+						left_right_rotate(node->left);
+					if (node->balance() < -1 && newNode->value.first > node->right->value.first)
+						left_rotate(node);
+					else if (node->balance() < -1)
+						right_left_rotate(node->right);
+					node = node->parent;
+				}
+			}
+
 		public:
+
 
 			map() : _root(NULL), _size(0), _alloc(allocator_type()), _node_alloc(node_allocator_type()), _comp(key_compare()) {
 				construct_leaf();
@@ -169,6 +229,8 @@ namespace ft
 						parent->right = newNode;
 				}
 				_size++;
+				_root->update_branch_size();
+				rebalance(newNode);
 				return newNode->value.second;
 			}
 
@@ -190,7 +252,7 @@ namespace ft
 			ft::pair<iterator, bool> insert(const value_type& value) {
 				size_type flag = count(value.first);
 				(*this)[value.first] = value.second;
-				return ft::make_pair(find(value.first), flag ? true : false);
+				return ft::make_pair(find(value.first), flag ? false : true);
 			}
 
 			iterator insert(iterator hint, const value_type& value) {
@@ -258,8 +320,13 @@ namespace ft
 				return end();
 			}
 
-			ft::pair<iterator,iterator> equal_range(const key_type& key);
-			ft::pair<const_iterator,const_iterator> equal_range(const key_type& key) const;
+			ft::pair<iterator,iterator> equal_range(const key_type& key) {
+				return ft::make_pair(lower_bound(key), upper_bound(key));
+			}
+
+			ft::pair<const_iterator,const_iterator> equal_range(const key_type& key) const {
+				return ft::make_pair(lower_bound(key), upper_bound(key));
+			}
 
 			iterator lower_bound(const key_type& key) {
 				if (_comp(key, begin()->first))
@@ -381,54 +448,57 @@ namespace ft
 			reverse_iterator rend() { return reverse_iterator(iterator(_rend)); }
 			const_reverse_iterator rend() const { return const_reverse_iterator(const_iterator(_rend)); }
 
-			void parkour(node_type *current, std::string const &type) {
-				if (type == "prefixe")
-					log(current);
+			void parkour(node_type *current) {
 				if (current->left)
-					parkour(current->left, type);
-				if (type == "infixe")
-					log(current);
+					parkour(current->left);
+				log(current);
 				if (current->right)
-					parkour(current->right, type);
-				if (type == "sufixe")
-					log(current);
+					parkour(current->right);
 			}
 
 			void log(node_type * node) {
-				std::cout << "\nNode < " << node->value.first << ", " << node->value.second << " > (" << node << ")";
+				std::cout << "\nNode < " << node->value.first << ", " << node->value.second << " > (balance = " << node->balance() << ")";
 				if (node->parent)
-					std::cout << "\nparent < " << node->parent->value.first << ", " << node->parent->value.second << " > (" << node->parent << ")";
+					std::cout << "\nparent < " << node->parent->value.first << ", " << node->parent->value.second << " >";
 				if (node->left)
-					std::cout << "\nleft < " << node->left->value.first << ", " << node->left->value.second << " > (" << node->left << ")";
+					std::cout << "\nleft < " << node->left->value.first << ", " << node->left->value.second << " > (size = " << node->left_branch_size << ")";
 				if (node->right)
-					std::cout << "\nright < " << node->right->value.first << ", " << node->right->value.second << " > (" << node->right << ")";
+					std::cout << "\nright < " << node->right->value.first << ", " << node->right->value.second << " > (size = " << node->right_branch_size << ")";
 				std::cout << std::endl;
 			}
 
-			void print() { parkour(_root, "infixe"); }
+			void print() {
+				std::cout << std::endl;
+				_root->print();
+				std::cout << std::endl;
+			}
 
 	};
 
 	template<class Key, class T, class Compare, class Alloc>
-	bool operator==(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs);
+	bool operator==(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs) {
+		return ft::equal(lhs.begin(), lhs.end(), rhs.begin()) && lhs.size() == rhs.size();
+	}
 
 	template<class Key, class T, class Compare, class Alloc>
-	bool operator!=(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs);
+	bool operator!=(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs) { return !(lhs == rhs); }
 
 	template<class Key, class T, class Compare, class Alloc>
-	bool operator<(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs);
+	bool operator<(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs) {
+		return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+	}
 
 	template<class Key, class T, class Compare, class Alloc>
-	bool operator<=(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs);
+	bool operator<=(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs) { return !(rhs < lhs); }
 
 	template<class Key, class T, class Compare, class Alloc>
-	bool operator>(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs);
+	bool operator>(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs) { return rhs < lhs; }
 
 	template<class Key, class T, class Compare, class Alloc>
-	bool operator>=(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs);
+	bool operator>=(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs) { return !(lhs < rhs); }
 
 	template<class Key, class T, class Compare, class Alloc>
-	void swap(ft::map<Key, T, Compare, Alloc>& lhs,  ft::map<Key, T, Compare, Alloc>& rhs);
+	void swap(ft::map<Key, T, Compare, Alloc>& lhs,  ft::map<Key, T, Compare, Alloc>& rhs) { lhs.swap(rhs); }
 
 } // namespace ft
 

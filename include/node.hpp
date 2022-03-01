@@ -2,6 +2,7 @@
 #define NODE_HPP
 
 #include <iostream>
+#include <iomanip>
 #include <iterator.hpp>
 #include <reverse_iterator.hpp>
 #include <iterator>
@@ -93,7 +94,42 @@ namespace ft
 				return copy;
 			}
 
+			int update_branch_size() {
+				left_branch_size = (left && left->type == NODE) ? left->update_branch_size() : 0;
+				right_branch_size = (right && right->type == NODE) ? right->update_branch_size() : 0;
+				return std::max(left_branch_size, right_branch_size) + 1;
+			}
+
 			int balance() const { return left_branch_size - right_branch_size; }
+
+			void print() {
+				int max_depth = std::max(left_branch_size, right_branch_size);
+				std::string *output = new std::string[max_depth + 1];
+
+				size_t delta = 4;
+				for (int i=0; i<max_depth; i++)
+					delta = delta * 2 + 1;
+
+				this->fill_output(output, delta);
+
+				for (int i=0; i<max_depth + 1; i++) {
+					std::cout << output[i].substr(delta / 2, output[i].size() - delta / 2) << std::endl;
+					delta = (delta - 1) / 2;
+				}
+				delete[] output;
+			}
+
+			int fill_output(std::string *output, int delta, int index = 0, int depth = 0) {
+				if (left && left->type == NODE)
+					left->fill_output(output, (delta - 1) / 2, index * 2, depth + 1);
+				if (right && right->type == NODE)
+					right->fill_output(output, (delta - 1) / 2, index * 2 + 1, depth + 1);
+
+				while (output[depth].size() < static_cast<size_t>(((delta + 1) * (index + 1)) - 1))
+					output[depth] += " ";
+				output[depth] += itoa(value.first);
+				return 1;
+			}
 			
 	};
 
