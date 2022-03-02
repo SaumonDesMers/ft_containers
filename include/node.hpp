@@ -130,7 +130,6 @@ namespace ft
 				output[depth] += itoa(value.first);
 				return 1;
 			}
-			
 	};
 
 } // namespace ft

@@ -183,8 +183,40 @@ namespace ft
 				return node;
 			}
 
-		public:
+			void swap_node(node_type *n1, node_type *n2) {
+				if (!n1 || !n2)
+					return;
+				std::cout << "swap " << n1->value.first << " & " << n2->value.first << std::endl;
+				change_parent(n1, n2);
+				change_parent(n2, n1);
+				std::swap(n1->parent, n2->parent);
 
+				log(n1);
+				log(n2);
+
+				if (n1->left)
+					n1->left->parent = n2;
+				if (n2->left)
+					n2->left->parent = n1;
+				std::swap(n1->left, n2->left);
+
+				log(n1);
+				log(n2);
+
+				if (n1->right)
+					n1->right->parent = n2;
+				if (n2->right)
+					n2->right->parent = n1;
+				std::swap(n1->right, n2->right);
+
+				log(n1);
+				log(n2);
+
+				std::swap(n1->left_branch_size, n2->left_branch_size);
+				std::swap(n1->right_branch_size, n2->right_branch_size);
+			}
+
+		public:
 
 			map() : _root(NULL), _size(0), _alloc(allocator_type()), _node_alloc(node_allocator_type()), _comp(key_compare()) {
 				construct_leaf();
@@ -324,25 +356,58 @@ namespace ft
 			void erase(iterator pos);
 
 			size_type erase(const key_type& key) {
-				if (empty())
-					return 0;
 				node_type *to_erase = find_node(key);
-				if (!to_erase->left && !to_erase->right) {
+				if (empty() || !to_erase)
+					return 0;
+				if (to_erase == _root) {
+					if (_size == 1) {
+						_root = NULL;
+						_end->parent = NULL;
+						_rend->parent = NULL;
+					}
+					else if (to_erase->left->type == node_type::REND) {
+						_root = to_erase->right;
+						_rend->parent = to_erase->right;
+						_root->left = _rend;
+						_root->parent = NULL;
+					}
+					else {
+						node_type *prev = previous(to_erase);
+						swap_node(to_erase, prev);
+						return 0;
+					}
+				}
+				else if (!to_erase->left && !to_erase->right) {
+					// to_rebalance = to_erase->parent;
 					change_parent(to_erase, NULL);
 				}
 				else if (to_erase->left && !to_erase->right) {
+					// to_rebalance = to_erase->left;
 					change_parent(to_erase, to_erase->left);
 				}
 				else if (!to_erase->left && to_erase->right) {
+					// to_rebalance = to_erase->right;
 					change_parent(to_erase, to_erase->right);
 				}
 				else {
 					node_type *prev = previous(to_erase);
-					// to_erase->swap(prev);
+					// to_rebalance = prev;
 					change_parent(prev, prev->left);
+					change_parent(to_erase, prev);
+					prev->left = to_erase->left;
+					if (prev->left)
+						prev->left->parent = prev;
+					prev->right = to_erase->right;
+					if (prev->right)
+						prev->right->parent = prev;
 				}
 				_node_alloc.destroy(to_erase);
 				_node_alloc.deallocate(to_erase, 1);
+				_size--;
+				// if (!empty()) {
+				// 	_root->update_branch_size();
+				// 	rebalance(to_rebalance);
+				// }
 				return 1;
 			}
 
@@ -546,8 +611,11 @@ namespace ft
 			}
 
 			void print() {
+				if (empty())
+					return;
 				std::cout << std::endl;
-				_root->print();
+				// _root->print();
+				parkour(_root);
 				std::cout << std::endl;
 			}
 

@@ -273,22 +273,20 @@ void test_erase_map() {
 
 	map m;
 
-	for (int i=0; i<20; i++)
-		m[i] = itoa(i);
+	for (int i=1; i<4; i++)
+		m[i] = "";
 
 	m.print();
-
-	m.erase(15);
-
+	m.erase(2);
 	m.print();
 }
 
 void test_map() {
-	test_swap_map();
-	test_find_map();
-	test_lower_bound_map();
-	test_upper_bound_map();
-	test_insert_map();
-	test_rel_ope_map();
-	// test_erase_map();
+	// test_swap_map();
+	// test_find_map();
+	// test_lower_bound_map();
+	// test_upper_bound_map();
+	// test_insert_map();
+	// test_rel_ope_map();
+	test_erase_map();
 }
