@@ -306,11 +306,22 @@ void test_erase_map() {
 
 void test_map() {
 	// test_swap_map();
-	test_find_map();
-	test_lower_bound_map();
-	test_upper_bound_map();
-	test_insert_map();
-	test_rel_ope_map();
-	test_copy_map();
-	test_erase_map();
+	// test_find_map();
+	// test_lower_bound_map();
+	// test_upper_bound_map();
+	// test_insert_map();
+	// test_rel_ope_map();
+	// test_copy_map();
+	// test_erase_map();
+
+	typedef ft::map<int, std::string>	map;
+
+	map m;
+	
+	for (int i=0; i<15; i++)
+		m[i] = "";
+	
+	map::const_iterator it;
+
+	std::cout << it->first << std::endl;
 }

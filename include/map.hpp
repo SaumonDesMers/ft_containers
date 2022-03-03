@@ -23,24 +23,24 @@ namespace ft
 
 		public:
 
-			typedef Key																		key_type;
-			typedef Type																	mapped_type;
-			typedef typename ft::pair<const Key, Type>										value_type;
-			typedef node<Key, Type, Traits, Allocator>										node_type;
-			typedef typename ft::map<Key, Type, Traits, Allocator>							map_type;
-			typedef typename std::size_t													size_type;
-			typedef typename std::ptrdiff_t													difference_type;
-			typedef Traits																	key_compare;
-			typedef Allocator																allocator_type;
-			typedef value_type&																reference;
-			typedef const value_type&														const_reference;
-			typedef typename Allocator::pointer												pointer;
-			typedef typename Allocator::const_pointer										const_pointer;
-			typedef typename ft::map_iterator<node_type, Key, Type, Traits, Allocator>		iterator;
-			typedef const iterator															const_iterator;
-			typedef typename ft::map_reverse_iterator<iterator>								reverse_iterator;
-			typedef typename ft::map_reverse_iterator<const_iterator>						const_reverse_iterator;
-			typedef typename Allocator::template rebind<node<Key, Type, Traits> >::other	node_allocator_type;
+			typedef Key																			key_type;
+			typedef Type																		mapped_type;
+			typedef typename ft::pair<const Key, Type>											value_type;
+			typedef node<Key, Type, Traits, Allocator>											node_type;
+			typedef typename ft::map<Key, Type, Traits, Allocator>								map_type;
+			typedef typename std::size_t														size_type;
+			typedef typename std::ptrdiff_t														difference_type;
+			typedef Traits																		key_compare;
+			typedef Allocator																	allocator_type;
+			typedef value_type&																	reference;
+			typedef const value_type&															const_reference;
+			typedef typename Allocator::pointer													pointer;
+			typedef typename Allocator::const_pointer											const_pointer;
+			typedef typename ft::map_iterator<node_type, Key, Type, Traits, Allocator>			iterator;
+			typedef typename ft::const_map_iterator<node_type, Key, Type, Traits, Allocator>	const_iterator;
+			typedef typename ft::map_reverse_iterator<iterator>									reverse_iterator;
+			typedef typename ft::map_reverse_iterator<const_iterator>							const_reverse_iterator;
+			typedef typename Allocator::template rebind<node<Key, Type, Traits> >::other		node_allocator_type;
 		
 		private:
 
@@ -58,9 +58,9 @@ namespace ft
 
 			void construct_leaf() {
 				_end = _node_alloc.allocate(1);
-				_node_alloc.construct(_end, node_type(value_type(key_type(), "end"), NULL, node_type::END));
+				_node_alloc.construct(_end, node_type(value_type(key_type(), mapped_type()), NULL, node_type::END));
 				_rend = _node_alloc.allocate(1);
-				_node_alloc.construct(_rend, node_type(value_type(key_type(), "rend"), NULL, node_type::REND));
+				_node_alloc.construct(_rend, node_type(value_type(key_type(), mapped_type()), NULL, node_type::REND));
 			}
 
 			void destroy_leaf() {
@@ -354,7 +354,8 @@ namespace ft
 
 			size_type size() const { return _size; }
 
-			size_type max_size() const { return _node_alloc.maxsize(); }
+			// size_type max_size() const { return _node_alloc.maxsize(); }
+			size_type max_size() const { return 1; }
 
 			void clear() {
 				if (_root)
@@ -560,7 +561,7 @@ namespace ft
 
 			key_compare key_comp() const { return _comp; }
 
-			// ft::map::value_compare value_comp() const;
+			std::less<value_type> value_comp() const { return std::less<value_type>(); }
 
 			iterator begin() {
 				node_type *node = _root;
