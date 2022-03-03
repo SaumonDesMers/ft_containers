@@ -115,13 +115,12 @@ namespace ft
 			}
 
 			void rebalance(node_type *node) {
-				node_type *newNode = node;
 				while (node) {
-					if (node->balance() > 1 && newNode->value.first < node->left->value.first)
+					if (node->balance() > 1 && node->left->balance() >= 0)
 						right_rotate(node->left);
 					else if (node->balance() > 1)
 						left_right_rotate(node->left);
-					if (node->balance() < -1 && newNode->value.first > node->right->value.first)
+					if (node->balance() < -1 && node->right->balance() <= 0)
 						left_rotate(node);
 					else if (node->balance() < -1)
 						right_left_rotate(node->right);
@@ -132,9 +131,9 @@ namespace ft
 			node_type *find_node(const key_type &key) {
 				node_type *current = _root;
 				while (current && current->type == node_type::NODE) {
-					if (key == current->value.first)
+					if (key == current->key())
 						return current;
-					else if (_comp(key, current->value.first))
+					else if (_comp(key, current->key()))
 						current = current->left;
 					else
 						current = current->right;
@@ -160,8 +159,8 @@ namespace ft
 						node = node->left;
 				}
 				else {
-					Key key = node->value.first;
-					while (node->parent && _comp(node->parent->value.first, key))
+					Key key = node->key();
+					while (node->parent && _comp(node->parent->key(), key))
 						node = node->parent;
 					node = node->parent;
 				}
@@ -175,45 +174,75 @@ namespace ft
 						node = node->right;
 				}
 				else {
-					Key key = node->value.first;
-					while (node->parent && _comp(key, node->parent->value.first) && node->type == node_type::NODE)
+					Key key = node->key();
+					while (node->parent && _comp(key, node->parent->key()) && node->type == node_type::NODE)
 						node = node->parent;
 					node = node->parent;
 				}
 				return node;
 			}
 
-			void swap_node(node_type *n1, node_type *n2) {
-				if (!n1 || !n2)
-					return;
-				std::cout << "swap " << n1->value.first << " & " << n2->value.first << std::endl;
-				change_parent(n1, n2);
-				change_parent(n2, n1);
-				std::swap(n1->parent, n2->parent);
-
-				log(n1);
-				log(n2);
-
-				if (n1->left)
-					n1->left->parent = n2;
-				if (n2->left)
-					n2->left->parent = n1;
-				std::swap(n1->left, n2->left);
-
-				log(n1);
-				log(n2);
-
-				if (n1->right)
-					n1->right->parent = n2;
-				if (n2->right)
-					n2->right->parent = n1;
-				std::swap(n1->right, n2->right);
-
-				log(n1);
-				log(n2);
-
-				std::swap(n1->left_branch_size, n2->left_branch_size);
-				std::swap(n1->right_branch_size, n2->right_branch_size);
+			size_type erase_node(node_type *to_erase) {
+				node_type *to_rebalance = NULL;
+				if (empty() || !to_erase)
+					return 0;
+				if (to_erase == _root) {
+					if (_size == 1) {
+						_root = NULL;
+						_end->parent = NULL;
+						_rend->parent = NULL;
+					}
+					else if (to_erase->left->type == node_type::REND) {
+						_root = to_erase->right;
+						_rend->parent = to_erase->right;
+						_root->left = _rend;
+						_root->parent = NULL;
+					}
+					else {
+						node_type *prev = previous(to_erase);
+						to_rebalance = prev->parent;
+						change_parent(prev, prev->left);
+						prev->left = to_erase->left;
+						if (prev->left)
+							prev->left->parent = prev;
+						prev->right = to_erase->right;
+						if (prev->right)
+							prev->right->parent = prev;
+						prev->parent = NULL;
+						_root = prev;
+					}
+				}
+				else if (!to_erase->left && !to_erase->right) {
+					to_rebalance = to_erase->parent;
+					change_parent(to_erase, NULL);
+				}
+				else if (to_erase->left && !to_erase->right) {
+					to_rebalance = to_erase->left;
+					change_parent(to_erase, to_erase->left);
+				}
+				else if (!to_erase->left && to_erase->right) {
+					to_rebalance = to_erase->right;
+					change_parent(to_erase, to_erase->right);
+				}
+				else {
+					node_type *prev = previous(to_erase);
+					to_rebalance = prev->parent;
+					change_parent(prev, prev->left);
+					change_parent(to_erase, prev);
+					prev->left = to_erase->left;
+					if (prev->left)
+						prev->left->parent = prev;
+					prev->right = to_erase->right;
+					if (prev->right)
+						prev->right->parent = prev;
+				}
+				_node_alloc.destroy(to_erase);
+				_node_alloc.deallocate(to_erase, 1);
+				_size--;
+				if (!empty())
+					_root->update_branch_size();
+				rebalance(to_rebalance);
+				return 1;
 			}
 
 		public:
@@ -236,7 +265,7 @@ namespace ft
 			}
 
 			map(const map& other) : _root(NULL) {
-				if (other._root) {
+				if (!other.empty()) {
 					_root = other._root->clone(NULL);
 					_end = _root;
 					while (_end->type != node_type::END)
@@ -253,10 +282,11 @@ namespace ft
 				_comp = other._comp;
 			}
 
-			~map() { clear(); }
+			~map() { clear(); destroy_leaf(); }
 
 			map& operator=(const map& other) {
 				clear();
+				destroy_leaf();
 				if (other._root) {
 					_root = other._root->clone(NULL);
 					_end = _root;
@@ -280,9 +310,9 @@ namespace ft
 				node_type *parent = NULL;
 				while (current && current->type == node_type::NODE) {
 					parent = current;
-					if (key == current->value.first)
+					if (key == current->key())
 						return current->value.second;
-					else if (_comp(key, current->value.first))
+					else if (_comp(key, current->key()))
 						current = current->left;
 					else
 						current = current->right;
@@ -309,7 +339,7 @@ namespace ft
 							parent->left = newNode;
 						}
 					}
-					else if (_comp(key, parent->value.first))
+					else if (_comp(key, parent->key()))
 						parent->left = newNode;
 					else
 						parent->right = newNode;
@@ -320,7 +350,7 @@ namespace ft
 				return newNode->value.second;
 			}
 
-			bool empty() const { return _size == 0; }
+			bool empty() const { return _root == NULL; }
 
 			size_type size() const { return _size; }
 
@@ -329,8 +359,6 @@ namespace ft
 			void clear() {
 				if (_root)
 					_root->destroy();
-				else
-					destroy_leaf();
 				_root = NULL;
 				_size = 0;
 			}
@@ -353,65 +381,48 @@ namespace ft
 					(*this)[it->first] = it->second;
 			}
 
-			void erase(iterator pos);
+			void erase(iterator pos) {
+				node_type *current = _root;
+				while (current && current->type == node_type::NODE) {
+					if (pos == iterator(current)) {
+						erase_node(current);
+						return;
+					}
+					else if (_comp(pos->first, current->key()))
+						current = current->left;
+					else
+						current = current->right;
+				}
+			}
 
 			size_type erase(const key_type& key) {
 				node_type *to_erase = find_node(key);
-				if (empty() || !to_erase)
-					return 0;
-				if (to_erase == _root) {
-					if (_size == 1) {
-						_root = NULL;
-						_end->parent = NULL;
-						_rend->parent = NULL;
-					}
-					else if (to_erase->left->type == node_type::REND) {
-						_root = to_erase->right;
-						_rend->parent = to_erase->right;
-						_root->left = _rend;
-						_root->parent = NULL;
-					}
-					else {
-						node_type *prev = previous(to_erase);
-						swap_node(to_erase, prev);
-						return 0;
-					}
-				}
-				else if (!to_erase->left && !to_erase->right) {
-					// to_rebalance = to_erase->parent;
-					change_parent(to_erase, NULL);
-				}
-				else if (to_erase->left && !to_erase->right) {
-					// to_rebalance = to_erase->left;
-					change_parent(to_erase, to_erase->left);
-				}
-				else if (!to_erase->left && to_erase->right) {
-					// to_rebalance = to_erase->right;
-					change_parent(to_erase, to_erase->right);
-				}
-				else {
-					node_type *prev = previous(to_erase);
-					// to_rebalance = prev;
-					change_parent(prev, prev->left);
-					change_parent(to_erase, prev);
-					prev->left = to_erase->left;
-					if (prev->left)
-						prev->left->parent = prev;
-					prev->right = to_erase->right;
-					if (prev->right)
-						prev->right->parent = prev;
-				}
-				_node_alloc.destroy(to_erase);
-				_node_alloc.deallocate(to_erase, 1);
-				_size--;
-				// if (!empty()) {
-				// 	_root->update_branch_size();
-				// 	rebalance(to_rebalance);
-				// }
-				return 1;
+				return erase_node(to_erase);
 			}
 
-			void erase(iterator first, iterator last);
+			void erase(iterator first, iterator last) {
+				node_type *current = _root;
+				node_type *next_node = NULL;
+				iterator it = first;
+				iterator tmp;
+				while (current && current->type == node_type::NODE) {
+					if (first == iterator(current)) {
+						while (it!=last) {
+							next_node = next(current);
+							tmp = it;
+							tmp++;
+							erase_node(current);
+							current = next_node;
+							it = tmp;
+						}
+						return;
+					}
+					else if (_comp(first->first, current->key()))
+						current = current->left;
+					else
+						current = current->right;
+				}
+			}
 
 			void swap(map_type& other) {
 				std::swap(_root, other._root);
@@ -427,9 +438,9 @@ namespace ft
 				node_type *current = _root;
 				while (current && current->type == node_type::NODE)
 				{
-					if (key == current->value.first)
+					if (key == current->key())
 						return 1;
-					else if (_comp(key, current->value.first))
+					else if (_comp(key, current->key()))
 						current = current->left;
 					else
 						current = current->right;
@@ -440,9 +451,9 @@ namespace ft
 			iterator find(const key_type& key) {
 				node_type *current = _root;
 				while (current && current->type == node_type::NODE) {
-					if (key == current->value.first)
+					if (key == current->key())
 						return iterator(current);
-					else if (_comp(key, current->value.first))
+					else if (_comp(key, current->key()))
 						current = current->left;
 					else
 						current = current->right;
@@ -453,9 +464,9 @@ namespace ft
 			const_iterator find(const key_type& key) const {
 				node_type *current = _root;
 				while (current && current->type == node_type::NODE) {
-					if (key == current->value.first)
+					if (key == current->key())
 						return const_iterator(current);
-					else if (_comp(key, current->value.first))
+					else if (_comp(key, current->key()))
 						current = current->left;
 					else
 						current = current->right;
@@ -479,9 +490,9 @@ namespace ft
 				node_type *current = _root;
 				node_type *parent = NULL;
 				while (current && current->type == node_type::NODE) {
-					if (key == current->value.first)
+					if (key == current->key())
 						return iterator(current);
-					else if (_comp(key, current->value.first)) {
+					else if (_comp(key, current->key())) {
 						parent = current;
 						current = current->left;
 					}
@@ -499,9 +510,9 @@ namespace ft
 				node_type *current = _root;
 				node_type *parent = NULL;
 				while (current && current->type == node_type::NODE) {
-					if (key == current->value.first)
+					if (key == current->key())
 						return const_iterator(current);
-					else if (_comp(key, current->value.first)) {
+					else if (_comp(key, current->key())) {
 						parent = current;
 						current = current->left;
 					}
@@ -519,7 +530,7 @@ namespace ft
 				node_type *current = _root;
 				node_type *parent = NULL;
 				while (current && current->type == node_type::NODE) {
-					if (_comp(key, current->value.first)) {
+					if (_comp(key, current->key())) {
 						parent = current;
 						current = current->left;
 					}
@@ -537,7 +548,7 @@ namespace ft
 				node_type *current = _root;
 				node_type *parent = NULL;
 				while (current && current->type == node_type::NODE) {
-					if (_comp(key, current->value.first)) {
+					if (_comp(key, current->key())) {
 						parent = current;
 						current = current->left;
 					}
@@ -600,23 +611,22 @@ namespace ft
 			}
 
 			void log(node_type * node) {
-				std::cout << "\nNode < " << node->value.first << ", " << node->value.second << " > (balance = " << node->balance() << ")";
+				std::cout << "\nNode < " << node->key() << ", " << node->value.second << " > (balance = " << node->balance() << ")";
 				if (node->parent)
-					std::cout << "\nparent < " << node->parent->value.first << ", " << node->parent->value.second << " >";
+					std::cout << "\nparent < " << node->parent->key() << ", " << node->parent->value.second << " >";
 				if (node->left)
-					std::cout << "\nleft < " << node->left->value.first << ", " << node->left->value.second << " > (size = " << node->left_branch_size << ")";
+					std::cout << "\nleft < " << node->left->key() << ", " << node->left->value.second << " > (size = " << node->left_branch_size << ")";
 				if (node->right)
-					std::cout << "\nright < " << node->right->value.first << ", " << node->right->value.second << " > (size = " << node->right_branch_size << ")";
+					std::cout << "\nright < " << node->right->key() << ", " << node->right->value.second << " > (size = " << node->right_branch_size << ")";
 				std::cout << std::endl;
 			}
 
 			void print() {
 				if (empty())
 					return;
-				std::cout << std::endl;
-				// _root->print();
-				parkour(_root);
-				std::cout << std::endl;
+				std::cout << "---------------------------------------------" << std::endl;
+				_root->print();
+				// parkour(_root);
 			}
 
 	};

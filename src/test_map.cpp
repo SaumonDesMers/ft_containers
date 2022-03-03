@@ -16,6 +16,29 @@ void debug(ImputIt first, ImputIt last) {
 	std::cout << std::endl;
 }
 
+void test_copy_map() {
+	typedef ft::map<int, std::string>	map;
+
+	map m;
+
+	for (int i=0; i<10; i++)
+		m[i*3] = "";
+	
+	debug(m);
+
+	map m1;
+
+	for (int i=0; i<5; i++)
+		m1[i*2] = "";
+
+	debug(m1);
+
+	m = m1;
+
+	debug(m);
+
+}
+
 void test_swap_map() {
 	typedef ft::map<int, std::string>	map;
 
@@ -272,21 +295,22 @@ void test_erase_map() {
 	typedef ft::map<int, std::string>	map;
 
 	map m;
-
-	for (int i=1; i<4; i++)
+	
+	for (int i=0; i<15; i++)
 		m[i] = "";
 
-	m.print();
-	m.erase(2);
-	m.print();
+	// m.print();
+	m.erase(m.find(5), m.find(9));
+	debug(m);
 }
 
 void test_map() {
 	// test_swap_map();
-	// test_find_map();
-	// test_lower_bound_map();
-	// test_upper_bound_map();
-	// test_insert_map();
-	// test_rel_ope_map();
+	test_find_map();
+	test_lower_bound_map();
+	test_upper_bound_map();
+	test_insert_map();
+	test_rel_ope_map();
+	test_copy_map();
 	test_erase_map();
 }

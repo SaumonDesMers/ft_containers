@@ -77,9 +77,9 @@ namespace ft
 			~node() {}
 
 			void destroy() {
-				if (left)
+				if (left && left->type == NODE)
 					left->destroy();
-				if (right)
+				if (right && right->type == NODE)
 					right->destroy();
 				node_alloc.destroy(this);
 				node_alloc.deallocate(this, 1);
@@ -101,6 +101,8 @@ namespace ft
 			}
 
 			int balance() const { return left_branch_size - right_branch_size; }
+
+			key_type key() { return value.first; }
 
 			void print() {
 				int max_depth = std::max(left_branch_size, right_branch_size);
