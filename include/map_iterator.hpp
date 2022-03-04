@@ -134,7 +134,6 @@ namespace ft
 			typedef value_type*													pointer;
 			typedef value_type&													reference;
 
-
 		private:
 
 			node_pointer 	_node;
@@ -159,8 +158,8 @@ namespace ft
 			bool operator==(const_map_iterator const &mit) const { return _node == mit._node; }
 			bool operator!=(const_map_iterator const &mit) const { return _node != mit._node; }
 
-			value_type& operator*() const { return _node->value; }
-			value_type* operator->() const { return &(operator*()); }
+			const reference operator*() const { return _node->const_value; }
+			pointer operator->() const { return &(operator*()); }
 
 			const_map_iterator operator++() {
 				if (_node->right) {

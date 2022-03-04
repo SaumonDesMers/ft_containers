@@ -366,20 +366,23 @@ namespace ft
 
 			ft::pair<iterator, bool> insert(const value_type& value) {
 				size_type flag = count(value.first);
-				(*this)[value.first] = value.second;
+				if (flag == 0)
+					(*this)[value.first] = value.second;
 				return ft::make_pair(find(value.first), flag ? false : true);
 			}
 
 			iterator insert(iterator hint, const value_type& value) {
 				(void)hint;
-				(*this)[value.first] = value.second;
+				if (count(value.first) == 0)
+					(*this)[value.first] = value.second;
 				return find(value.first);
 			}
 
 			template<class InputIt>
 			void insert(InputIt first, InputIt last) {
 				for (InputIt it = first; it != last; it++)
-					(*this)[it->first] = it->second;
+					if (count(it->first) == 0)
+						(*this)[it->first] = it->second;
 			}
 
 			void erase(iterator pos) {
