@@ -304,24 +304,29 @@ void test_erase_map() {
 	debug(m);
 }
 
+void test_const_iterator_map() {
+	// typedef ft::map<int, std::string>	map;
+
+	// map m;
+	
+	// for (int i=0; i<15; i++)
+	// 	m[i] = "";
+	
+	// map::iterator it = m.begin();
+	// map::reverse_iterator rit(it);
+
+	// std::cout << (it == rit.base()) << std::endl;
+	// std::cout << rit->first << std::endl;
+	// std::cout << rit.base()->first << std::endl;
+}
+
 void test_map() {
 	// test_swap_map();
-	// test_find_map();
-	// test_lower_bound_map();
-	// test_upper_bound_map();
-	// test_insert_map();
-	// test_rel_ope_map();
-	// test_copy_map();
-	// test_erase_map();
-
-	typedef ft::map<int, std::string>	map;
-
-	map m;
-	
-	for (int i=0; i<15; i++)
-		m[i] = "";
-	
-	map::const_iterator it;
-
-	std::cout << it->first << std::endl;
+	test_find_map();
+	test_lower_bound_map();
+	test_upper_bound_map();
+	test_insert_map();
+	test_rel_ope_map();
+	test_copy_map();
+	test_erase_map();
 }

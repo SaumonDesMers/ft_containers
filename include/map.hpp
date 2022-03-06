@@ -226,10 +226,15 @@ namespace ft
 				}
 				else {
 					node_type *prev = previous(to_erase);
+					if (prev->type == node_type::REND)
+						prev = next(to_erase);
 					to_rebalance = prev->parent;
+					if (to_rebalance == to_erase)
+						to_rebalance = prev;
 					change_parent(prev, prev->left);
 					change_parent(to_erase, prev);
-					prev->left = to_erase->left;
+					if (prev != to_erase->left)
+						prev->left = to_erase->left;
 					if (prev->left)
 						prev->left->parent = prev;
 					prev->right = to_erase->right;
@@ -261,7 +266,8 @@ namespace ft
 				: _root(NULL), _size(0), _alloc(alloc), _node_alloc(node_allocator_type()), _comp(comp) {
 				construct_leaf();
 				for (InputIt it = first; it != last; it++)
-					(*this)[it->first] = it->second;
+					if (!count(it->first))
+						(*this)[it->first] = it->second;
 			}
 
 			map(const map& other) : _root(NULL) {
@@ -366,6 +372,7 @@ namespace ft
 
 			ft::pair<iterator, bool> insert(const value_type& value) {
 				size_type flag = count(value.first);
+					if (!flag)
 				(*this)[value.first] = value.second;
 				return ft::make_pair(find(value.first), flag ? false : true);
 			}
@@ -379,7 +386,8 @@ namespace ft
 			template<class InputIt>
 			void insert(InputIt first, InputIt last) {
 				for (InputIt it = first; it != last; it++)
-					(*this)[it->first] = it->second;
+					if (!count(it->first))
+						(*this)[it->first] = it->second;
 			}
 
 			void erase(iterator pos) {
@@ -584,20 +592,14 @@ namespace ft
 			const_iterator end() const { return const_iterator(_end); }
 
 			reverse_iterator rbegin() {
-				node_type *node = _root;
 				if (empty())
 					return rend();
-				while (node->right->type == node_type::NODE)
-					node = node->right;
-				return reverse_iterator(iterator(node));
+				return reverse_iterator(end());
 			}
 			const_reverse_iterator rbegin() const {
-				node_type *node = _root;
 				if (empty())
 					return rend();
-				while (node->right->type == node_type::NODE)
-					node = node->right;
-				return const_reverse_iterator(const_iterator(node));
+				return const_reverse_iterator(end());
 			}
 
 			reverse_iterator rend() { return reverse_iterator(iterator(_rend)); }
@@ -627,6 +629,7 @@ namespace ft
 					return;
 				std::cout << "---------------------------------------------" << std::endl;
 				_root->print();
+				std::cout << "---------------------------------------------" << std::endl;
 				// parkour(_root);
 			}
 
