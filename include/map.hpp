@@ -226,7 +226,11 @@ namespace ft
 				}
 				else {
 					node_type *prev = previous(to_erase);
+					if (prev->type == node_type::REND)
+						prev = next(to_erase);
 					to_rebalance = prev->parent;
+					if (to_rebalance == to_erase)
+						to_rebalance = prev;
 					change_parent(prev, prev->left);
 					change_parent(to_erase, prev);
 					prev->left = to_erase->left;
@@ -261,7 +265,8 @@ namespace ft
 				: _root(NULL), _size(0), _alloc(alloc), _node_alloc(node_allocator_type()), _comp(comp) {
 				construct_leaf();
 				for (InputIt it = first; it != last; it++)
-					(*this)[it->first] = it->second;
+					if (count(it->first) == 0)
+						(*this)[it->first] = it->second;
 			}
 
 			map(const map& other) : _root(NULL) {
@@ -592,7 +597,7 @@ namespace ft
 					return rend();
 				while (node->right->type == node_type::NODE)
 					node = node->right;
-				return reverse_iterator(iterator(node));
+				return reverse_iterator(end());
 			}
 			const_reverse_iterator rbegin() const {
 				node_type *node = _root;
@@ -600,7 +605,7 @@ namespace ft
 					return rend();
 				while (node->right->type == node_type::NODE)
 					node = node->right;
-				return const_reverse_iterator(const_iterator(node));
+				return const_reverse_iterator(end());
 			}
 
 			reverse_iterator rend() { return reverse_iterator(iterator(_rend)); }

@@ -61,7 +61,7 @@ namespace ft
 					while (_node->left)
 						_node = _node->left;
 				}
-				else {
+				else if (_node->type != node_type::END && _node->parent) {
 					Key key = _node->value.first;
 					while (_node->parent && _comp(_node->parent->value.first, key))
 						_node = _node->parent;
@@ -77,7 +77,7 @@ namespace ft
 					while (_node->left)
 						_node = _node->left;
 				}
-				else {
+				else if (_node->type != node_type::END && _node->parent) {
 					Key key = _node->value.first;
 					while (_node->parent && _comp(_node->parent->value.first, key))
 						_node = _node->parent;
@@ -92,7 +92,7 @@ namespace ft
 					while (_node->right)
 						_node = _node->right;
 				}
-				else {
+				else if (_node->type != node_type::REND && _node->parent) {
 					Key key = _node->value.first;
 					while (_node->parent && _comp(key, _node->parent->value.first) && _node->type == node_type::NODE)
 						_node = _node->parent;
@@ -108,7 +108,7 @@ namespace ft
 					while (_node->right)
 						_node = _node->right;
 				}
-				else {
+				else if (_node->type != node_type::REND && _node->parent) {
 					Key key = _node->value.first;
 					while (_node->parent && _comp(key, _node->parent->value.first) && _node->type == node_type::NODE)
 						_node = _node->parent;
@@ -158,7 +158,7 @@ namespace ft
 			bool operator==(const_map_iterator const &mit) const { return _node == mit._node; }
 			bool operator!=(const_map_iterator const &mit) const { return _node != mit._node; }
 
-			const reference operator*() const { return _node->const_value; }
+			reference operator*() const { return _node->value; }
 			pointer operator->() const { return &(operator*()); }
 
 			const_map_iterator &operator++() {
@@ -167,7 +167,7 @@ namespace ft
 					while (_node->left)
 						_node = _node->left;
 				}
-				else {
+				else if (_node->type != node_type::END && _node->parent) {
 					Key key = _node->value.first;
 					while (_node->parent && _comp(_node->parent->value.first, key))
 						_node = _node->parent;
@@ -183,7 +183,7 @@ namespace ft
 					while (_node->left)
 						_node = _node->left;
 				}
-				else {
+				else if (_node->type != node_type::END && _node->parent) {
 					Key key = _node->value.first;
 					while (_node->parent && _comp(_node->parent->value.first, key))
 						_node = _node->parent;
@@ -198,7 +198,7 @@ namespace ft
 					while (_node->right)
 						_node = _node->right;
 				}
-				else {
+				else if (_node->type != node_type::REND && _node->parent) {
 					Key key = _node->value.first;
 					while (_node->parent && _comp(key, _node->parent->value.first) && _node->type == node_type::NODE)
 						_node = _node->parent;
@@ -214,7 +214,7 @@ namespace ft
 					while (_node->right)
 						_node = _node->right;
 				}
-				else {
+				else if (_node->type != node_type::REND && _node->parent) {
 					Key key = _node->value.first;
 					while (_node->parent && _comp(key, _node->parent->value.first) && _node->type == node_type::NODE)
 						_node = _node->parent;
@@ -241,14 +241,15 @@ namespace ft
 
 		public:
 
-			map_reverse_iterator(iterator_type const &it = iterator_type()) _it(it) { _it--; }
+			map_reverse_iterator() : _it(iterator_type()) {}
+			map_reverse_iterator(iterator_type const &it) : _it(it) { _it--; }
 			template <class Iter>
 			// map_reverse_iterator (map_reverse_iterator<Iter> const &rit) { _it = const_cast<iterator_type>(rit.base()); }
-			map_reverse_iterator (map_reverse_iterator<Iter> const &rit) _it(rit.base()) { _it--; }
+			map_reverse_iterator (map_reverse_iterator<Iter> const &rit) : _it(rit.base()) { _it--; }
 			~map_reverse_iterator() {}
 			map_reverse_iterator operator=(map_reverse_iterator const &rit) { _it = rit._it; return *this; }
 
-			iterator_type base() const { iterator_type ret = _it; ret--; return ret; }
+			iterator_type base() const { iterator_type ret = _it; ret++; return ret; }
 
 			map_reverse_iterator operator++() { _it--; return *this; }
 			map_reverse_iterator operator++(int) { map_reverse_iterator old(*this); _it--; return old; }
