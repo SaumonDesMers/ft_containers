@@ -134,7 +134,6 @@ namespace ft
 			typedef value_type*													pointer;
 			typedef value_type&													reference;
 
-
 		private:
 
 			node_pointer 	_node;
@@ -159,8 +158,8 @@ namespace ft
 			bool operator==(const_map_iterator const &it) const { return _node == it._node; }
 			bool operator!=(const_map_iterator const &it) const { return _node != it._node; }
 
-			value_type& operator*() const { return _node->value; }
-			value_type* operator->() const { return &(operator*()); }
+			reference operator*() const { return _node->value; }
+			pointer operator->() const { return &(operator*()); }
 
 			const_map_iterator &operator++() {
 				if (_node->right) {
@@ -243,13 +242,13 @@ namespace ft
 		public:
 
 			map_reverse_iterator() : _it(iterator_type()) {}
-			map_reverse_iterator(iterator_type const &it) : _it(it) { --_it; }
+			map_reverse_iterator(iterator_type const &it) : _it(it) { _it--; }
 			template <class Iter>
-			map_reverse_iterator (map_reverse_iterator<Iter> const &rit) { _it = rit.base(); --_it; }
+			map_reverse_iterator (map_reverse_iterator<Iter> const &rit) : _it(rit.base()) { _it--; }
 			~map_reverse_iterator() {}
 			map_reverse_iterator operator=(map_reverse_iterator const &rit) { _it = rit._it; return *this; }
 
-			iterator_type base() const { iterator_type ret = _it; return ++ret; }
+			iterator_type base() const { iterator_type ret = _it; ret++; return ret; }
 
 			map_reverse_iterator operator++() { _it--; return *this; }
 			map_reverse_iterator operator++(int) { map_reverse_iterator old(*this); _it--; return old; }

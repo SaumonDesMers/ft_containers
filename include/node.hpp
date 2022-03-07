@@ -39,6 +39,7 @@ namespace ft
 			typedef typename map_type::node_allocator_type				node_allocator_type;
 
 			value_type			value;
+			const_reference		const_value;
 			node_pointer		parent;
 			node_pointer		left;
 			node_pointer		right;
@@ -56,6 +57,7 @@ namespace ft
 
 			node(const_reference _value, node_pointer _parent, type_e _type = NODE, node_pointer _left = 0, node_pointer _right = 0, int lbs = 0, int rbs = 0)
 				: value(_value),
+				const_value(value),
 				parent(_parent),
 				left(_left),
 				right(_right),
@@ -66,6 +68,7 @@ namespace ft
 
 			node(node_type const &other)
 				: value(other.value),
+				const_value(value),
 				parent(other.parent),
 				left(other.left),
 				right(other.right),
@@ -103,6 +106,9 @@ namespace ft
 			int balance() const { return left_branch_size - right_branch_size; }
 
 			key_type key() { return value.first; }
+
+			reference getValue() { return value; }
+			const_reference getValue() const { return const_value; }
 
 			void print() {
 				int max_depth = std::max(left_branch_size, right_branch_size);
