@@ -38,19 +38,19 @@ namespace ft
 			map_iterator(node_pointer const &ptr = node_pointer())
 				: _node(ptr), _comp(key_compare()) {}
 			
-			map_iterator (map_iterator const &mit)
-				: _node(mit._node), _comp(key_compare()) {}
+			map_iterator (map_iterator const &it)
+				: _node(it._node), _comp(key_compare()) {}
 			
 			~map_iterator() {}
 
-			map_iterator operator=(map_iterator const &mit) {
-				_node = mit._node;
-				_comp = mit._comp;
+			map_iterator operator=(map_iterator const &it) {
+				_node = it._node;
+				_comp = it._comp;
 				return *this;
 			}
 
-			bool operator==(map_iterator const &mit) const { return _node == mit._node; }
-			bool operator!=(map_iterator const &mit) const { return _node != mit._node; }
+			bool operator==(map_iterator const &it) const { return _node == it._node; }
+			bool operator!=(map_iterator const &it) const { return _node != it._node; }
 
 			value_type& operator*() const { return _node->value; }
 			value_type* operator->() const { return &(operator*()); }
@@ -144,19 +144,19 @@ namespace ft
 			const_map_iterator(node_pointer const &ptr = node_pointer())
 				: _node(ptr), _comp(key_compare()) {}
 			
-			const_map_iterator (const_map_iterator const &mit)
-				: _node(mit._node), _comp(key_compare()) {}
+			const_map_iterator (const_map_iterator const &it)
+				: _node(it._node), _comp(key_compare()) {}
 			
 			~const_map_iterator() {}
 
-			const_map_iterator operator=(const_map_iterator const &mit) {
-				_node = mit._node;
-				_comp = mit._comp;
+			const_map_iterator operator=(const_map_iterator const &it) {
+				_node = it._node;
+				_comp = it._comp;
 				return *this;
 			}
 
-			bool operator==(const_map_iterator const &mit) const { return _node == mit._node; }
-			bool operator!=(const_map_iterator const &mit) const { return _node != mit._node; }
+			bool operator==(const_map_iterator const &it) const { return _node == it._node; }
+			bool operator!=(const_map_iterator const &it) const { return _node != it._node; }
 
 			reference operator*() const { return _node->value; }
 			pointer operator->() const { return &(operator*()); }

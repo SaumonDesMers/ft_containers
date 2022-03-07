@@ -200,7 +200,11 @@ namespace ft
 					}
 					else {
 						node_type *prev = previous(to_erase);
+						if (prev->type == node_type::REND)
+							prev = next(to_erase);
 						to_rebalance = prev->parent;
+						if (to_rebalance == to_erase)
+							to_rebalance = prev;
 						change_parent(prev, prev->left);
 						prev->left = to_erase->left;
 						if (prev->left)
@@ -301,6 +305,8 @@ namespace ft
 					while (_rend->type != node_type::REND)
 						_rend = _rend->left;
 				}
+				else
+					construct_leaf();
 				_size = other._size;
 				_alloc = other._alloc;
 				_node_alloc = other._node_alloc;

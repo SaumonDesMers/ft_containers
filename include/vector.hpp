@@ -26,8 +26,6 @@ namespace ft
 			typedef typename Alloc::const_pointer								const_pointer;
 			typedef T*															iterator;
 			typedef const T*													const_iterator;
-			// typedef typename ft::iterator<random_access_iterator_tag, T>		iterator;
-			// typedef typename ft::const_iterator<random_access_iterator_tag, T>	const_iterator;
 			typedef typename ft::reverse_iterator<iterator>						reverse_iterator;
 			typedef typename ft::reverse_iterator<const_iterator>				const_reverse_iterator;
 
@@ -160,11 +158,10 @@ namespace ft
 				try {
 					if (count > _capacity)
 						reserve(std::max(_size * 2, count));
-					while (_size < count) {
-						_alloc.destroy(&_arr[_size]);
+					while (_size > count)
+						_alloc.destroy(&_arr[_size--]);
+					while (_size < count)
 						_alloc.construct(&_arr[_size++], value);
-					}
-					_size = count;
 				} catch (const std::exception& e) {
 					throw std::length_error("vector::_M_fill_insert");
 				}
@@ -308,7 +305,7 @@ namespace ft
 			iterator begin() { return iterator(_arr); }
 			iterator end() { return iterator(&_arr[_size]); }
 
-			const_iterator begin() const { return iterator(_arr); }
+			const_iterator begin() const { std::cout << _arr << std::endl; return iterator(_arr); }
 			const_iterator end() const { return iterator(&_arr[_size]); }
 
 			reverse_iterator rbegin() { return reverse_iterator(&_arr[_size]); }
@@ -338,11 +335,7 @@ namespace ft
 	bool operator>=(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) { return !(left<right); }
 
 	template <class T, class Alloc>
-	void swap(ft::vector<T, Alloc>& left, ft::vector<T, Alloc>& right) {
-		ft::vector<T, Alloc> tmp(left);
-		left = right;
-		right = tmp;
-	}
+	void swap(ft::vector<T, Alloc>& left, ft::vector<T, Alloc>& right) { left.swap(right); }
 	
 } // namespace ft
 
