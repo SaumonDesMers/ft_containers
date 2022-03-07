@@ -5,8 +5,9 @@ void debug(ft::vector<T>& v) {
 	std::cout << "\n_arr: ";
 	for (size_t i=0; i<v.size(); i++)
 		std::cout << v[i] << (i != v.size() - 1 ? ", " : "");
-	std::cout << "\n_size: " << v.size() << std::endl;
-	std::cout << "_capacity: " << v.capacity() << std::endl;
+	// std::cout << "\n_size: " << v.size() << std::endl;
+	// std::cout << "_capacity: " << v.capacity() << std::endl;
+	std::cout << "\nsize : " << v.size() << ", capacity : " << v.capacity() << std::endl;
 	std::cout << std::endl;
 }
 
@@ -170,6 +171,31 @@ void test_operator() {
 	std::cout << (v1 >= v1) << std::endl;
 }
 
+class Awesome {
+
+	public:
+
+		Awesome( void ) : _n( 42 ) { std::cout << "Default constructor" << std::endl; } //should not happen too often or else there is a wrong use of allocator (which calls the copy constructor)
+		Awesome( int n ) : _n( n ) { std::cout << "Int constructor" << std::endl; (void)n; }
+		Awesome( Awesome const &rhs ) : _n( 42 ) { *this = rhs;}
+		virtual ~Awesome(void) {}
+
+		Awesome &operator=( Awesome const & rhs ) { this->_n = rhs._n; return (*this); }
+		bool operator==( Awesome const & rhs ) const { return (this->_n == rhs._n); }
+		bool operator!=( Awesome const & rhs ) const { return (this->_n != rhs._n); }
+		bool operator>( Awesome const & rhs ) const { return (this->_n > rhs._n); }
+		bool operator<( Awesome const & rhs ) const { return (this->_n < rhs._n); }
+		bool operator>=( Awesome const & rhs ) const { return (this->_n >= rhs._n); }
+		bool operator<=( Awesome const & rhs ) const { return (this->_n <= rhs._n); }
+		void operator+=(int rhs){ _n += rhs; }
+		int get( void ) const { return this->_n; }
+
+	private:
+
+		int _n;
+};
+std::ostream & operator<<( std::ostream & o, Awesome const & rhs ) { o << rhs.get(); return o; }
+
 void test_vector() {
 
 	// test_push_back();
@@ -180,6 +206,27 @@ void test_vector() {
 	// test_assign();
 	// test_insert();
 	// test_iterator();
-	test_erase();
+	// test_erase();
 	// test_operator();
+
+	std::cout << std::endl << "INSERT TESTS" << std::endl;
+	ft::vector<Awesome> test(1, 1);
+	ft::vector<Awesome> test2(5, 5);
+
+	test.insert(test.begin(), 200, 12);
+	debug<Awesome>(test);
+	test.insert(test.begin() + 12, 200, 30);
+	debug<Awesome>(test);
+	test.insert(test.end(), 12, 50);
+	debug<Awesome>(test);
+	test.insert(test.end() - 1, 0, 60);
+	debug<Awesome>(test);
+	test.insert(test.end() - 1, 1, 70);
+	debug<Awesome>(test);
+	test.insert(test.begin() + 412, test2.begin(), test2.end());
+	debug<Awesome>(test);
+	test.insert(test.begin() + 6, test2.begin(), test2.end());
+	debug<Awesome>(test);
+	test.insert(test.end(), test2.begin(), test2.end());
+	debug<Awesome>(test);
 }

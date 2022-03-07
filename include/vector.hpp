@@ -68,7 +68,7 @@ namespace ft
 
 			vector(const vector& src) {
 				_size = src.size();
-				_capacity = src.capacity();
+				_capacity = src.size();
 				_alloc = src.get_allocator();
 				_arr = _alloc.allocate(_capacity);
 				for (size_type i=0; i<_size; i++)
@@ -82,11 +82,15 @@ namespace ft
 
 			vector& operator=(const vector& src) {
 				clear();
-				_alloc.deallocate(_arr, _capacity);
 				_size = src.size();
-				_capacity = src.capacity();
-				_alloc = src.get_allocator();
-				_arr = _alloc.allocate(_capacity);
+				if (_capacity < src.size()) {
+					_alloc.deallocate(_arr, _capacity);
+					_capacity = src.capacity();
+					_alloc = src.get_allocator();
+					_arr = _alloc.allocate(_capacity);
+				}
+				else
+					_alloc = src.get_allocator();
 				for (size_type i=0; i<_size; i++)
 					_alloc.construct(&_arr[i], src[i]);
 				return *this;
@@ -158,8 +162,10 @@ namespace ft
 				try {
 					if (count > _capacity)
 						reserve(std::max(_size * 2, count));
-					while (_size > count)
-						_alloc.destroy(&_arr[_size--]);
+					while (_size > count) {
+						_alloc.destroy(&_arr[_size - 1]);
+						_size--;
+					}
 					while (_size < count)
 						_alloc.construct(&_arr[_size++], value);
 				} catch (const std::exception& e) {
@@ -221,17 +227,30 @@ namespace ft
 
 			iterator insert(iterator pos, const value_type& value) {
 				try {
+					// ft::vector<value_type, allocator_type> tmp(*this);
+					// if (tmp.size() + 1 > tmp.capacity())
+					// 	tmp.reserve(tmp.size() * 2);
+					// tmp.clear();
+					// size_type idx= distance(begin(), pos);
+					// for (iterator it=begin(); it!=pos; it++)
+					// 	tmp.push_back(*it);
+					// tmp.push_back(value);
+					// for (iterator it=pos; it!=end(); it++)
+					// 	tmp.push_back(*it);
+					// swap(tmp);
+
 					ft::vector<value_type, allocator_type> tmp(*this);
-					if (tmp.size() + 1 > tmp.capacity())
-						tmp.reserve(tmp.size() * 2);
-					tmp.clear();
+					iterator tmp_pos = tmp.begin() + ft::distance(begin(), pos);
 					size_type idx= distance(begin(), pos);
-					for (iterator it=begin(); it!=pos; it++)
-						tmp.push_back(*it);
-					tmp.push_back(value);
-					for (iterator it=pos; it!=end(); it++)
-						tmp.push_back(*it);
-					swap(tmp);
+					if (_size + 1 > _capacity)
+						reserve(_size * 2);
+					clear();
+					for (iterator it=tmp.begin(); it!=tmp_pos; it++)
+						push_back(*it);
+					push_back(value);
+					for (iterator it=tmp_pos; it!=tmp.end(); it++)
+						push_back(*it);
+
 					return &_arr[idx];
 				} catch (const std::exception& e) {
 					throw std::length_error("vector::_M_fill_insert");
@@ -241,16 +260,16 @@ namespace ft
 			void insert(iterator pos, size_type count, const value_type& value) {
 				try {
 					ft::vector<value_type, allocator_type> tmp(*this);
-					if (tmp.size() + count > tmp.capacity())
-						tmp.reserve(std::max(tmp.size() + count, tmp.size() * 2));
-					tmp.clear();
-					for (iterator it=begin(); it!=pos; it++)
-						tmp.push_back(*it);
+					iterator tmp_pos = tmp.begin() + ft::distance(begin(), pos);
+					if (_size + count > _capacity)
+						reserve(std::max(_size + count, _size * 2));
+					clear();
+					for (iterator it=tmp.begin(); it!=tmp_pos; it++)
+						push_back(*it);
 					for (size_type i=0; i<count; i++)
-						tmp.push_back(value);
-					for (iterator it=pos; it!=end(); it++)
-						tmp.push_back(*it);
-					swap(tmp);
+						push_back(value);
+					for (iterator it=tmp_pos; it!=tmp.end(); it++)
+						push_back(*it);
 				} catch (const std::exception& e) {
 					throw std::length_error("vector::_M_fill_insert");
 				}
@@ -260,17 +279,17 @@ namespace ft
 			void insert(iterator pos, InputIt first, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type last) {
 				try {
 					ft::vector<value_type, allocator_type> tmp(*this);
+					iterator tmp_pos = tmp.begin() + ft::distance(begin(), pos);
 					size_type count = ft::distance(first, last);
-					if (tmp.size() + count > tmp.capacity())
-						tmp.reserve(std::max(tmp.size() + count, tmp.size() * 2));
-					tmp.clear();
-					for (iterator it=begin(); it!=pos; it++)
-						tmp.push_back(*it);
+					if (_size + count > _capacity)
+						reserve(std::max(_size + count, _size * 2));
+					clear();
+					for (iterator it=tmp.begin(); it!=tmp_pos; it++)
+						push_back(*it);
 					for (InputIt it=first; it!=last; it++)
-						tmp.push_back(*it);
-					for (iterator it=pos; it!=end(); it++)
-						tmp.push_back(*it);
-					swap(tmp);
+						push_back(*it);
+					for (iterator it=tmp_pos; it!=tmp.end(); it++)
+						push_back(*it);
 				} catch (const std::exception& e) {
 					throw std::length_error("vector::_M_fill_insert");
 				}
@@ -305,7 +324,7 @@ namespace ft
 			iterator begin() { return iterator(_arr); }
 			iterator end() { return iterator(&_arr[_size]); }
 
-			const_iterator begin() const { std::cout << _arr << std::endl; return iterator(_arr); }
+			const_iterator begin() const { return iterator(_arr); }
 			const_iterator end() const { return iterator(&_arr[_size]); }
 
 			reverse_iterator rbegin() { return reverse_iterator(&_arr[_size]); }
