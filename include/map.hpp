@@ -15,7 +15,7 @@
 namespace ft
 {
 
-	template <class Key, class Type, class Traits, class Allocator>
+	template <class Map, class Value, class Traits, class Allocator>
 	class node;
 
 	template <class Key, class Type, class Traits = std::less<Key>, class Allocator=std::allocator<ft::pair<const Key, Type> > >
@@ -25,22 +25,28 @@ namespace ft
 
 			typedef Key																			key_type;
 			typedef Type																		mapped_type;
-			typedef typename ft::pair<const Key, Type>											value_type;
-			typedef node<Key, Type, Traits, Allocator>											node_type;
 			typedef typename ft::map<Key, Type, Traits, Allocator>								map_type;
+
+			typedef typename ft::pair<const Key, Type>											value_type;
+			typedef typename ft::pair<const Key, const Type>									const_value_type;
+			typedef node<map_type, value_type, Traits, Allocator>								node_type;
+			typedef node<map_type, const_value_type, Traits, Allocator>							const_node_type;
+
 			typedef typename std::size_t														size_type;
 			typedef typename std::ptrdiff_t														difference_type;
 			typedef Traits																		key_compare;
 			typedef Allocator																	allocator_type;
+			typedef typename Allocator::template rebind<node<map_type, value_type, Traits, Allocator> >::other		node_allocator_type;
+
 			typedef value_type&																	reference;
 			typedef const value_type&															const_reference;
 			typedef typename Allocator::pointer													pointer;
 			typedef typename Allocator::const_pointer											const_pointer;
-			typedef typename ft::map_iterator<node_type, Key, Type, Traits, Allocator>			iterator;
-			typedef typename ft::const_map_iterator<node_type, Key, Type, Traits, Allocator>	const_iterator;
+
+			typedef typename ft::map_iterator<node_type, Traits, Allocator>						iterator;
+			typedef typename ft::map_iterator<const_node_type, Traits, Allocator>				const_iterator;
 			typedef typename ft::map_reverse_iterator<iterator>									reverse_iterator;
 			typedef typename ft::map_reverse_iterator<const_iterator>							const_reverse_iterator;
-			typedef typename Allocator::template rebind<node<Key, Type, Traits> >::other		node_allocator_type;
 		
 		private:
 
@@ -314,7 +320,7 @@ namespace ft
 				_comp = other._comp;
 				return *this;
 			}
-
+/*
 			allocator_type get_allocator() const { return _alloc; }
 
 			mapped_type& operator[](const key_type& key) {
@@ -361,13 +367,12 @@ namespace ft
 				rebalance(newNode);
 				return newNode->value.second;
 			}
-
+*/
 			bool empty() const { return _root == NULL; }
 
 			size_type size() const { return _size; }
 
-			// size_type max_size() const { return _node_alloc.maxsize(); }
-			size_type max_size() const { return 1; }
+			size_type max_size() const { return _node_alloc.max_size(); }
 
 			void clear() {
 				if (_root)
@@ -375,7 +380,7 @@ namespace ft
 				_root = NULL;
 				_size = 0;
 			}
-
+/*
 			ft::pair<iterator, bool> insert(const value_type& value) {
 				size_type flag = count(value.first);
 					if (!flag)
@@ -592,11 +597,14 @@ namespace ft
 					return end();
 				while (node->left->type == node_type::NODE)
 					node = node->left;
-				return const_iterator(node);
+				return const_iterator(const_node_type(node));
 			}
 
 			iterator end() { return iterator(_end); }
-			const_iterator end() const { return const_iterator(_end); }
+			const_iterator end() const {
+				const_node_type ret(_end);
+				return const_iterator(const_node_type(ret));
+			}
 
 			reverse_iterator rbegin() {
 				if (empty())
@@ -610,7 +618,7 @@ namespace ft
 			}
 
 			reverse_iterator rend() { return reverse_iterator(iterator(_rend)); }
-			const_reverse_iterator rend() const { return const_reverse_iterator(const_iterator(_rend)); }
+			const_reverse_iterator rend() const { return const_reverse_iterator(const_iterator(const_node_type(_rend))); }
 
 			void parkour(node_type *current) {
 				if (current->left)
@@ -639,9 +647,9 @@ namespace ft
 				std::cout << "---------------------------------------------" << std::endl;
 				// parkour(_root);
 			}
-
+*/
 	};
-
+/*
 	template<class Key, class T, class Compare, class Alloc>
 	bool operator==(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs) {
 		return ft::equal(lhs.begin(), lhs.end(), rhs.begin()) && lhs.size() == rhs.size();
@@ -666,7 +674,7 @@ namespace ft
 
 	template<class Key, class T, class Compare, class Alloc>
 	void swap(ft::map<Key, T, Compare, Alloc>& lhs,  ft::map<Key, T, Compare, Alloc>& rhs) { lhs.swap(rhs); }
-
+*/
 } // namespace ft
 
 #endif

@@ -305,28 +305,45 @@ void test_erase_map() {
 }
 
 void test_const_iterator_map() {
-	// typedef ft::map<int, std::string>	map;
+	typedef ft::map<int, char>	map;
 
-	// map m;
+	map m;
 	
-	// for (int i=0; i<15; i++)
-	// 	m[i] = "";
+	for (int i=0; i<15; i++)
+		m[i] = i + 65;
 	
-	// map::iterator it = m.begin();
-	// map::reverse_iterator rit(it);
+	map::iterator it = m.begin();
+	map::const_iterator cit(it);
 
-	// std::cout << (it == rit.base()) << std::endl;
+	// it++;
+	// it->second = '1';
+	cit->second = '2';
+	// map::const_iterator::const_value_type
+	// cit++;
+	// std::cout << cit->second << std::endl;
+
+	// // map::iterator it2(cit);
+	// map::const_iterator cit2(it);
+
+	// map::reverse_iterator rit(m.rbegin());
 	// std::cout << rit->first << std::endl;
-	// std::cout << rit.base()->first << std::endl;
+	// map::reverse_iterator crit(m.rbegin());
+	// std::cout << crit->first << std::endl;
+
+	// const map &mp = m;
+
+	// cit = mp.lower_bound(5);
 }
 
 void test_map() {
 	// test_swap_map();
-	test_find_map();
-	test_lower_bound_map();
-	test_upper_bound_map();
-	test_insert_map();
-	test_rel_ope_map();
-	test_copy_map();
-	test_erase_map();
+	// test_find_map();
+	// test_lower_bound_map();
+	// test_upper_bound_map();
+	// test_insert_map();
+	// test_rel_ope_map();
+	// test_copy_map();
+	// test_erase_map();
+	test_const_iterator_map();
+
 }

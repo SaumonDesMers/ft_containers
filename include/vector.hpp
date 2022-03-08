@@ -297,10 +297,12 @@ namespace ft
 
 			iterator erase(iterator pos) {
 				try {
-					_alloc.destroy(pos);
-					for (iterator it=pos; (it + 1)!=end(); it++)
-						*it = *(it + 1);
+					for (iterator it=pos; (it + 1)!=end(); it++) {
+						_alloc.destroy(it);
+						_alloc.construct(it, *(it + 1));
+					}
 					_size--;
+					_alloc.destroy(&_arr[_size]);
 					return pos;
 				} catch (const std::exception& e) {
 					throw;
@@ -309,12 +311,14 @@ namespace ft
 
 			iterator erase(iterator first, iterator last) {
 				try {
-					for (iterator it=first; it!=last; it++)
-						_alloc.destroy(it);
 					size_type offset = ft::distance(first, last);
-					for (iterator it=first; (it + offset)!=end(); it++)
-						*it = *(it + offset);
-					_size -= offset;
+					for (iterator it=first; (it + offset)!=end(); it++) {
+						_alloc.destroy(it);
+						_alloc.construct(it, *(it + offset));
+					}
+					for (size_type i=0; i<offset; i++)
+						_alloc.destroy(&_arr[--_size]);
+					// _size -= offset;
 					return first;
 				} catch (const std::exception& e) {
 					throw;
@@ -336,7 +340,10 @@ namespace ft
 	};
 
 	template <class T, class Alloc>
-	bool operator==(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) { return ft::equal(left.begin(), left.end(), right.begin()) && left.size() == right.size(); }
+	bool operator==(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) {
+		bool flag = left.size() == right.size();
+		return (flag && left.size() == 0) || (flag && ft::equal(left.begin(), left.end(), right.begin()));
+	}
 
 	template <class T, class Alloc>
 	bool operator!=(const ft::vector<T, Alloc>& left, const ft::vector<T, Alloc>& right) { return !(left == right); }

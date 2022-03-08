@@ -20,14 +20,14 @@ int main() {
 	map<string, string> m;
 
 	for (size_t i=0; i<input.size(); i++) {
-		if (input[i] == '(') {
-			string addr = input.substr(i+1, input.find_first_of(')', i) - i - 1);
+		if (input[i] == '{') {
+			string addr = input.substr(i+1, input.find_first_of('}', i) - i - 1);
 			if (!m.count(addr)) {
 				m[addr] = color[j++];
 			}
 			cout << m[addr];
 		}
-		else if (input[i] == ')')
+		else if (input[i] == '}')
 			cout << nc;
 		else
 			cout << input[i];

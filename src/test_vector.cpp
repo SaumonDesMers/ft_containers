@@ -209,24 +209,24 @@ void test_vector() {
 	// test_erase();
 	// test_operator();
 
-	std::cout << std::endl << "INSERT TESTS" << std::endl;
-	ft::vector<Awesome> test(1, 1);
-	ft::vector<Awesome> test2(5, 5);
+	ft::vector<ft::vector<int> >	erase_in_me;
+	for (int i = 0; i < 7; i++)
+	{
+		ft::vector<int>	j(1, i);
+		erase_in_me.push_back(j);
+	}
+	for (size_t i = 0; i < erase_in_me.size(); i++)
+		std::cout << erase_in_me.at(i).front() << ' ';
+	std::cout << '\n';
 
-	test.insert(test.begin(), 200, 12);
-	debug<Awesome>(test);
-	test.insert(test.begin() + 12, 200, 30);
-	debug<Awesome>(test);
-	test.insert(test.end(), 12, 50);
-	debug<Awesome>(test);
-	test.insert(test.end() - 1, 0, 60);
-	debug<Awesome>(test);
-	test.insert(test.end() - 1, 1, 70);
-	debug<Awesome>(test);
-	test.insert(test.begin() + 412, test2.begin(), test2.end());
-	debug<Awesome>(test);
-	test.insert(test.begin() + 6, test2.begin(), test2.end());
-	debug<Awesome>(test);
-	test.insert(test.end(), test2.begin(), test2.end());
-	debug<Awesome>(test);
+	erase_in_me.erase(erase_in_me.begin() + 3);
+	for (size_t i = 0; i < erase_in_me.size(); i++)
+		std::cout << erase_in_me.at(i).front() << ' ';
+	std::cout << '\n';
+	erase_in_me.erase(erase_in_me.begin() + 1, erase_in_me.begin() + 3);
+	for (size_t i = 0; i < erase_in_me.size(); i++)
+		std::cout << erase_in_me.at(i).front() << ' ';
+	std::cout << '\n';
+
+	std::cout << std::endl;
 }
