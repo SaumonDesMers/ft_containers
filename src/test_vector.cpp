@@ -5,9 +5,10 @@ void debug(ft::vector<T>& v) {
 	std::cout << "\n_arr: ";
 	for (size_t i=0; i<v.size(); i++)
 		std::cout << v[i] << (i != v.size() - 1 ? ", " : "");
-	// std::cout << "\n_size: " << v.size() << std::endl;
-	// std::cout << "_capacity: " << v.capacity() << std::endl;
-	std::cout << "\nsize : " << v.size() << ", capacity : " << v.capacity() << std::endl;
+	std::cout << "\n_size: " << v.size() << std::endl;
+	std::cout << "_capacity: " << v.capacity() << std::endl;
+	std::cout << "front: " << v.front() << std::endl;
+	std::cout << "back: " << v.back() << std::endl;
 	std::cout << std::endl;
 }
 
@@ -209,24 +210,16 @@ void test_vector() {
 	// test_erase();
 	// test_operator();
 
-	ft::vector<ft::vector<int> >	erase_in_me;
-	for (int i = 0; i < 7; i++)
+	ft::vector<std::string>	v;
+	for (int i = 0; i < 15; i++)
 	{
-		ft::vector<int>	j(1, i);
-		erase_in_me.push_back(j);
+		std::string	str(i + 1, i + 65);
+		v.push_back(str);
 	}
-	for (size_t i = 0; i < erase_in_me.size(); i++)
-		std::cout << erase_in_me.at(i).front() << ' ';
-	std::cout << '\n';
-
-	erase_in_me.erase(erase_in_me.begin() + 3);
-	for (size_t i = 0; i < erase_in_me.size(); i++)
-		std::cout << erase_in_me.at(i).front() << ' ';
-	std::cout << '\n';
-	erase_in_me.erase(erase_in_me.begin() + 1, erase_in_me.begin() + 3);
-	for (size_t i = 0; i < erase_in_me.size(); i++)
-		std::cout << erase_in_me.at(i).front() << ' ';
-	std::cout << '\n';
-
-	std::cout << std::endl;
+	
+	debug(v);
+	v.erase(v.begin() + 3);
+	debug(v);
+	v.erase(v.begin() + 4, v.end());
+	debug(v);
 }

@@ -3,15 +3,15 @@
 
 #include <iostream>
 #include <iomanip>
-#include <iterator.hpp>
-#include <reverse_iterator.hpp>
+#include "iterator.hpp"
+#include "reverse_iterator.hpp"
 #include <iterator>
 #include <exception>
-#include <utils.hpp>
-#include <other.hpp>
-#include <pair.hpp>
-#include <map.hpp>
-// #include <map_iterator.hpp>
+#include "utils.hpp"
+#include "other.hpp"
+#include "pair.hpp"
+#include "map.hpp"
+#include "map_iterator.hpp"
 
 namespace ft
 {
@@ -37,8 +37,6 @@ namespace ft
 			typedef node_type*														node_pointer;
 			typedef const node_pointer												const_node_pointer;
 			typedef typename map_type::node_allocator_type							node_allocator_type;
-
-			typedef typename map_type::const_node_type								const_node_type;
 
 			value_type			value;
 			node_pointer		parent;
@@ -105,7 +103,7 @@ namespace ft
 			int balance() const { return left_branch_size - right_branch_size; }
 
 			key_type key() { return value.first; }
-
+/*
 			void print() {
 				int max_depth = std::max(left_branch_size, right_branch_size);
 				std::string *output = new std::string[max_depth + 1];
@@ -134,10 +132,7 @@ namespace ft
 				output[depth] += itoa(value.first);
 				return 1;
 			}
-	
-			operator const_node_type() const {
-				return const_node_type(value, parent, type, left, right, left_branch_size, right_branch_size);
-			}
+*/
 	};
 
 } // namespace ft

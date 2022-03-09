@@ -1,15 +1,17 @@
 #include <iostream>
 #include <string>
 #include <deque>
-#if 1 //CREATE A REAL STL EXAMPLE
+#if 0 //CREATE A REAL STL EXAMPLE
 	#include <map>
 	#include <stack>
 	#include <vector>
-	namespace ft = std;
+	namespace ft = std; 
+    #define NS "std"
 #else
 	#include <map.hpp>
 	#include <stack.hpp>
 	#include <vector.hpp>
+    #define NS "ft"
 #endif
 
 #include <stdlib.h>
@@ -55,6 +57,8 @@ int main(int argc, char** argv) {
 	const int seed = atoi(argv[1]);
 	srand(seed);
 
+    std::cout << NS << std::endl;
+
 	ft::vector<std::string> vector_str;
 	ft::vector<int> vector_int;
 	ft::stack<int> stack_int;
@@ -67,12 +71,16 @@ int main(int argc, char** argv) {
 		vector_buffer.push_back(Buffer());
 	}
 
+    std::cout << "1" << std::endl;
+
 	for (int i = 0; i < COUNT; i++)
 	{
 		const int idx = rand() % COUNT;
 		vector_buffer[idx].idx = 5;
 	}
 	ft::vector<Buffer>().swap(vector_buffer);
+
+    std::cout << "2" << std::endl;
 
 	try
 	{
@@ -85,13 +93,19 @@ int main(int argc, char** argv) {
 	}
 	catch(const std::exception& e)
 	{
-		//NORMAL ! :P
+		// NORMAL ! :P
 	}
+
+    std::cout << "3\n" << COUNT << std::endl;
 	
+
 	for (int i = 0; i < COUNT; ++i)
 	{
 		map_int.insert(ft::make_pair(rand(), rand()));
+        std::cout << i << "\r";
 	}
+
+    std::cout << "\n4" << std::endl;
 
 	int sum = 0;
 	for (int i = 0; i < 10000; i++)
@@ -107,10 +121,12 @@ int main(int argc, char** argv) {
 	MutantStack<char> iterable_stack;
 	for (char letter = 'a'; letter <= 'z'; letter++)
 		iterable_stack.push(letter);
+    std::cout << "5" << std::endl;
 	for (MutantStack<char>::iterator it = iterable_stack.begin(); it != iterable_stack.end(); it++)
 	{
 		std::cout << *it;
 	}
+    std::cout << "6" << std::endl;
 	std::cout << std::endl;
 	return (0);
 }

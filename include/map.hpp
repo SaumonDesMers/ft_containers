@@ -2,15 +2,15 @@
 #define MAP_HPP
 
 #include <iostream>
-#include <iterator.hpp>
-#include <reverse_iterator.hpp>
+#include "iterator.hpp"
+#include "reverse_iterator.hpp"
 #include <iterator>
 #include <exception>
-#include <utils.hpp>
-#include <other.hpp>
-#include <pair.hpp>
-#include <node.hpp>
-#include <map_iterator.hpp>
+#include "utils.hpp"
+#include "other.hpp"
+#include "pair.hpp"
+#include "node.hpp"
+#include "map_iterator.hpp"
 
 namespace ft
 {
@@ -30,7 +30,6 @@ namespace ft
 			typedef typename ft::pair<const Key, Type>											value_type;
 			typedef typename ft::pair<const Key, const Type>									const_value_type;
 			typedef node<map_type, value_type, Traits, Allocator>								node_type;
-			typedef node<map_type, const_value_type, Traits, Allocator>							const_node_type;
 
 			typedef typename std::size_t														size_type;
 			typedef typename std::ptrdiff_t														difference_type;
@@ -43,8 +42,8 @@ namespace ft
 			typedef typename Allocator::pointer													pointer;
 			typedef typename Allocator::const_pointer											const_pointer;
 
-			typedef typename ft::map_iterator<node_type, Traits, Allocator>						iterator;
-			typedef typename ft::map_iterator<const_node_type, Traits, Allocator>				const_iterator;
+			typedef typename ft::map_iterator<node_type, value_type, Traits, Allocator>			iterator;
+			typedef typename ft::const_map_iterator<node_type, const_value_type, Traits, Allocator>	const_iterator;
 			typedef typename ft::map_reverse_iterator<iterator>									reverse_iterator;
 			typedef typename ft::map_reverse_iterator<const_iterator>							const_reverse_iterator;
 		
@@ -59,8 +58,6 @@ namespace ft
 			node_type*			_rend;
 
 			key_compare			_comp;
-
-			// bool operator==(key_type const &k1, key_type const &k2) { return !comp(k1, k2) && !comp(k2, k1); }
 
 			void construct_leaf() {
 				_end = _node_alloc.allocate(1);
@@ -320,7 +317,7 @@ namespace ft
 				_comp = other._comp;
 				return *this;
 			}
-/*
+
 			allocator_type get_allocator() const { return _alloc; }
 
 			mapped_type& operator[](const key_type& key) {
@@ -367,7 +364,7 @@ namespace ft
 				rebalance(newNode);
 				return newNode->value.second;
 			}
-*/
+
 			bool empty() const { return _root == NULL; }
 
 			size_type size() const { return _size; }
@@ -380,12 +377,51 @@ namespace ft
 				_root = NULL;
 				_size = 0;
 			}
-/*
+
 			ft::pair<iterator, bool> insert(const value_type& value) {
-				size_type flag = count(value.first);
-					if (!flag)
-				(*this)[value.first] = value.second;
-				return ft::make_pair(find(value.first), flag ? false : true);
+                node_type *current = _root;
+				node_type *parent = NULL;
+				while (current && current->type == node_type::NODE) {
+					parent = current;
+					if (value.first == current->key()) {
+						return ft::make_pair(iterator(current), false);
+                    }
+					else if (_comp(value.first, current->key()))
+						current = current->left;
+					else
+						current = current->right;
+				}
+
+				node_type *newNode = _node_alloc.allocate(1);
+				_node_alloc.construct(newNode, node_type(value, parent));
+				if (empty()) {
+					_root = newNode;
+					newNode->left = _rend;
+					newNode->right = _end;
+					_end->parent = _root;
+					_rend->parent = _root;
+				}
+				else {
+					if (current) {
+						current->parent = newNode;
+						if (current->type == node_type::END) {
+							newNode->right = current;
+							parent->right = newNode;
+						}
+						else if (current->type == node_type::REND) {
+							newNode->left = current;
+							parent->left = newNode;
+						}
+					}
+					else if (_comp(value.first, parent->key()))
+						parent->left = newNode;
+					else
+						parent->right = newNode;
+				}
+				_size++;
+				_root->update_branch_size();
+				rebalance(newNode);
+				return ft::make_pair(iterator(newNode), true);
 			}
 
 			iterator insert(iterator hint, const value_type& value) {
@@ -506,7 +542,7 @@ namespace ft
 			iterator lower_bound(const key_type& key) {
 				if (_comp(key, begin()->first))
 					return begin();
-				else if (_comp(rbegin()->first, key))
+				else if (_comp(rbegin()->first, key) || empty())
 					return end();
 				node_type *current = _root;
 				node_type *parent = NULL;
@@ -597,14 +633,11 @@ namespace ft
 					return end();
 				while (node->left->type == node_type::NODE)
 					node = node->left;
-				return const_iterator(const_node_type(node));
+				return const_iterator(node);
 			}
 
 			iterator end() { return iterator(_end); }
-			const_iterator end() const {
-				const_node_type ret(_end);
-				return const_iterator(const_node_type(ret));
-			}
+			const_iterator end() const { return const_iterator(_end); }
 
 			reverse_iterator rbegin() {
 				if (empty())
@@ -618,7 +651,7 @@ namespace ft
 			}
 
 			reverse_iterator rend() { return reverse_iterator(iterator(_rend)); }
-			const_reverse_iterator rend() const { return const_reverse_iterator(const_iterator(const_node_type(_rend))); }
+			const_reverse_iterator rend() const { return const_reverse_iterator(const_iterator(_rend)); }
 
 			void parkour(node_type *current) {
 				if (current->left)
@@ -647,9 +680,9 @@ namespace ft
 				std::cout << "---------------------------------------------" << std::endl;
 				// parkour(_root);
 			}
-*/
+
 	};
-/*
+
 	template<class Key, class T, class Compare, class Alloc>
 	bool operator==(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs) {
 		return ft::equal(lhs.begin(), lhs.end(), rhs.begin()) && lhs.size() == rhs.size();
@@ -674,7 +707,7 @@ namespace ft
 
 	template<class Key, class T, class Compare, class Alloc>
 	void swap(ft::map<Key, T, Compare, Alloc>& lhs,  ft::map<Key, T, Compare, Alloc>& rhs) { lhs.swap(rhs); }
-*/
+
 } // namespace ft
 
 #endif

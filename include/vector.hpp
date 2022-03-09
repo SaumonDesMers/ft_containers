@@ -2,12 +2,12 @@
 #define VECTOR_HPP
 
 #include <iostream>
-#include <iterator.hpp>
-#include <reverse_iterator.hpp>
+#include "iterator.hpp"
+#include "reverse_iterator.hpp"
 #include <iterator>
 #include <exception>
-#include <utils.hpp>
-#include <other.hpp>
+#include "utils.hpp"
+#include "other.hpp"
 
 namespace ft
 {
@@ -227,21 +227,9 @@ namespace ft
 
 			iterator insert(iterator pos, const value_type& value) {
 				try {
-					// ft::vector<value_type, allocator_type> tmp(*this);
-					// if (tmp.size() + 1 > tmp.capacity())
-					// 	tmp.reserve(tmp.size() * 2);
-					// tmp.clear();
-					// size_type idx= distance(begin(), pos);
-					// for (iterator it=begin(); it!=pos; it++)
-					// 	tmp.push_back(*it);
-					// tmp.push_back(value);
-					// for (iterator it=pos; it!=end(); it++)
-					// 	tmp.push_back(*it);
-					// swap(tmp);
-
 					ft::vector<value_type, allocator_type> tmp(*this);
 					iterator tmp_pos = tmp.begin() + ft::distance(begin(), pos);
-					size_type idx= distance(begin(), pos);
+					size_type idx= ft::distance(begin(), pos);
 					if (_size + 1 > _capacity)
 						reserve(_size * 2);
 					clear();
@@ -311,6 +299,7 @@ namespace ft
 
 			iterator erase(iterator first, iterator last) {
 				try {
+					std::cout << "Erase [" << *first << "," << (last == end() ? "end" : *last) << ") = [" << (first - begin()) << "," << (last - begin()) << ")" << std::endl;
 					size_type offset = ft::distance(first, last);
 					for (iterator it=first; (it + offset)!=end(); it++) {
 						_alloc.destroy(it);
@@ -318,7 +307,6 @@ namespace ft
 					}
 					for (size_type i=0; i<offset; i++)
 						_alloc.destroy(&_arr[--_size]);
-					// _size -= offset;
 					return first;
 				} catch (const std::exception& e) {
 					throw;

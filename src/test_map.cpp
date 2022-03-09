@@ -315,24 +315,23 @@ void test_const_iterator_map() {
 	map::iterator it = m.begin();
 	map::const_iterator cit(it);
 
-	// it++;
-	// it->second = '1';
-	cit->second = '2';
-	// map::const_iterator::const_value_type
-	// cit++;
-	// std::cout << cit->second << std::endl;
+	it++;
+	it->second = '1';
+	// cit->second = '2';
+	cit++;
+	std::cout << cit->second << std::endl;
 
-	// // map::iterator it2(cit);
-	// map::const_iterator cit2(it);
+	// map::iterator it2(cit);
+	map::const_iterator cit2(it);
 
-	// map::reverse_iterator rit(m.rbegin());
-	// std::cout << rit->first << std::endl;
-	// map::reverse_iterator crit(m.rbegin());
-	// std::cout << crit->first << std::endl;
+	map::reverse_iterator rit(m.rbegin());
+	std::cout << rit->first << std::endl;
+	map::reverse_iterator crit(m.rbegin());
+	std::cout << crit->first << std::endl;
 
-	// const map &mp = m;
+	const map &mp = m;
 
-	// cit = mp.lower_bound(5);
+	cit = mp.lower_bound(5);
 }
 
 void test_map() {
