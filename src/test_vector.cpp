@@ -172,54 +172,15 @@ void test_operator() {
 	std::cout << (v1 >= v1) << std::endl;
 }
 
-class Awesome {
-
-	public:
-
-		Awesome( void ) : _n( 42 ) { std::cout << "Default constructor" << std::endl; } //should not happen too often or else there is a wrong use of allocator (which calls the copy constructor)
-		Awesome( int n ) : _n( n ) { std::cout << "Int constructor" << std::endl; (void)n; }
-		Awesome( Awesome const &rhs ) : _n( 42 ) { *this = rhs;}
-		virtual ~Awesome(void) {}
-
-		Awesome &operator=( Awesome const & rhs ) { this->_n = rhs._n; return (*this); }
-		bool operator==( Awesome const & rhs ) const { return (this->_n == rhs._n); }
-		bool operator!=( Awesome const & rhs ) const { return (this->_n != rhs._n); }
-		bool operator>( Awesome const & rhs ) const { return (this->_n > rhs._n); }
-		bool operator<( Awesome const & rhs ) const { return (this->_n < rhs._n); }
-		bool operator>=( Awesome const & rhs ) const { return (this->_n >= rhs._n); }
-		bool operator<=( Awesome const & rhs ) const { return (this->_n <= rhs._n); }
-		void operator+=(int rhs){ _n += rhs; }
-		int get( void ) const { return this->_n; }
-
-	private:
-
-		int _n;
-};
-std::ostream & operator<<( std::ostream & o, Awesome const & rhs ) { o << rhs.get(); return o; }
-
 void test_vector() {
-
-	// test_push_back();
-	// test_reserve();
-	// test_resize();
-	// test_pop_back();
-	// test_swap();
-	// test_assign();
-	// test_insert();
-	// test_iterator();
-	// test_erase();
-	// test_operator();
-
-	ft::vector<std::string>	v;
-	for (int i = 0; i < 15; i++)
-	{
-		std::string	str(i + 1, i + 65);
-		v.push_back(str);
-	}
-	
-	debug(v);
-	v.erase(v.begin() + 3);
-	debug(v);
-	v.erase(v.begin() + 4, v.end());
-	debug(v);
+	test_push_back();
+	test_reserve();
+	test_resize();
+	test_pop_back();
+	test_swap();
+	test_assign();
+	test_insert();
+	test_iterator();
+	test_erase();
+	test_operator();
 }

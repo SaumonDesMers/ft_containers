@@ -71,16 +71,12 @@ int main(int argc, char** argv) {
 		vector_buffer.push_back(Buffer());
 	}
 
-    std::cout << "1" << std::endl;
-
 	for (int i = 0; i < COUNT; i++)
 	{
 		const int idx = rand() % COUNT;
 		vector_buffer[idx].idx = 5;
 	}
 	ft::vector<Buffer>().swap(vector_buffer);
-
-    std::cout << "2" << std::endl;
 
 	try
 	{
@@ -96,8 +92,7 @@ int main(int argc, char** argv) {
 		// NORMAL ! :P
 	}
 
-    std::cout << "3\n" << COUNT << std::endl;
-	
+	std::cout << COUNT << std::endl;
 
 	for (int i = 0; i < COUNT; ++i)
 	{
@@ -105,7 +100,19 @@ int main(int argc, char** argv) {
         std::cout << i << "\r";
 	}
 
-    std::cout << "\n4" << std::endl;
+	for (int i = 0; i < COUNT; ++i)
+	{
+		map_int.insert(ft::make_pair(i, rand()));
+        std::cout << i << "\r";
+	}
+
+	std::cout << std::endl;
+
+	for (int i = 0; i < COUNT; ++i)
+	{
+		map_int.erase(i);
+        std::cout << i << "\r";
+	}
 
 	int sum = 0;
 	for (int i = 0; i < 10000; i++)
@@ -113,7 +120,7 @@ int main(int argc, char** argv) {
 		int access = rand();
 		sum += map_int[access];
 	}
-	std::cout << "should be constant with the same seed: " << sum << std::endl;
+	std::cout << "\nshould be constant with the same seed: " << sum << std::endl;
 
 	{
 		ft::map<int, int> copy = map_int;
@@ -121,12 +128,10 @@ int main(int argc, char** argv) {
 	MutantStack<char> iterable_stack;
 	for (char letter = 'a'; letter <= 'z'; letter++)
 		iterable_stack.push(letter);
-    std::cout << "5" << std::endl;
 	for (MutantStack<char>::iterator it = iterable_stack.begin(); it != iterable_stack.end(); it++)
 	{
 		std::cout << *it;
 	}
-    std::cout << "6" << std::endl;
 	std::cout << std::endl;
 	return (0);
 }

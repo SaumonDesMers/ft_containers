@@ -49,40 +49,28 @@ void test_swap_map() {
 	m1[7] = "hey";
 	m1[1] = "yo";
 
-	map::iterator m_it = m1.begin();
-	map::iterator m_ite = m1.end();
-
 	map m2;
 
 	m2[4] = "bonjour";
 	m2[6] = "mdr";
 	m2[9] = "lol";
 
-	map::iterator m2_it = m2.begin();
-	map::iterator m2_ite = m2.end();
-
 	std::cout << "M1" << std::endl;
-	debug(m_it, m_ite);
+	debug(m1);
 	std::cout << std::endl;
 
 	std::cout << "M2" << std::endl;
-	debug(m2_it, m2_ite);
+	debug(m2);
 
 	std::cout << "Swap" << std::endl;
 	std::cout << std::endl;
 	m1.swap(m2);
 
 	std::cout << "M1" << std::endl;
-	std::cout << "with old iterator" << std::endl;
-	debug(m_it, m_ite);
-	std::cout << "with swaped map" << std::endl;
 	debug(m1);
 	std::cout << std::endl;
 
 	std::cout << "M2" << std::endl;
-	std::cout << "with old iterator" << std::endl;
-	debug(m2_it, m2_ite);
-	std::cout << "with swaped map" << std::endl;
 	debug(m2);
 	std::cout << std::endl;
 }
@@ -335,14 +323,13 @@ void test_const_iterator_map() {
 }
 
 void test_map() {
-	// test_swap_map();
-	// test_find_map();
-	// test_lower_bound_map();
-	// test_upper_bound_map();
-	// test_insert_map();
-	// test_rel_ope_map();
-	// test_copy_map();
-	// test_erase_map();
+	test_swap_map();
+	test_find_map();
+	test_lower_bound_map();
+	test_upper_bound_map();
+	test_insert_map();
+	test_rel_ope_map();
+	test_copy_map();
+	test_erase_map();
 	test_const_iterator_map();
-
 }

@@ -87,7 +87,7 @@ namespace ft
 					x->parent->right = y;
 				y->left = x;
 				x->parent = y;
-				_root->update_branch_size();
+				x->update_size();
 			}
 
 			void right_rotate(node_type *x) {
@@ -104,7 +104,7 @@ namespace ft
 					y->parent->right = x;
 				x->right = y;
 				y->parent = x;
-				_root->update_branch_size();
+				y->update_size();
 			}
 
 			void left_right_rotate(node_type *x) {
@@ -185,6 +185,36 @@ namespace ft
 				return node;
 			}
 
+			void add_node(node_type *current, node_type *parent, node_type *newNode) {
+				if (empty()) {
+					_root = newNode;
+					newNode->left = _rend;
+					newNode->right = _end;
+					_end->parent = _root;
+					_rend->parent = _root;
+				}
+				else {
+					if (current) {
+						current->parent = newNode;
+						if (current->type == node_type::END) {
+							newNode->right = current;
+							parent->right = newNode;
+						}
+						else if (current->type == node_type::REND) {
+							newNode->left = current;
+							parent->left = newNode;
+						}
+					}
+					else if (_comp(newNode->key(), parent->key()))
+						parent->left = newNode;
+					else
+						parent->right = newNode;
+				}
+				_size++;
+				newNode->update_size();
+				rebalance(newNode);
+			}
+
 			size_type erase_node(node_type *to_erase) {
 				node_type *to_rebalance = NULL;
 				if (empty() || !to_erase)
@@ -251,8 +281,8 @@ namespace ft
 				_node_alloc.destroy(to_erase);
 				_node_alloc.deallocate(to_erase, 1);
 				_size--;
-				if (!empty())
-					_root->update_branch_size();
+				if (to_rebalance)
+					to_rebalance->update_size();
 				rebalance(to_rebalance);
 				return 1;
 			}
@@ -335,33 +365,7 @@ namespace ft
 
 				node_type *newNode = _node_alloc.allocate(1);
 				_node_alloc.construct(newNode, node_type(value_type(key, mapped_type()), parent));
-				if (empty()) {
-					_root = newNode;
-					newNode->left = _rend;
-					newNode->right = _end;
-					_end->parent = _root;
-					_rend->parent = _root;
-				}
-				else {
-					if (current) {
-						current->parent = newNode;
-						if (current->type == node_type::END) {
-							newNode->right = current;
-							parent->right = newNode;
-						}
-						else if (current->type == node_type::REND) {
-							newNode->left = current;
-							parent->left = newNode;
-						}
-					}
-					else if (_comp(key, parent->key()))
-						parent->left = newNode;
-					else
-						parent->right = newNode;
-				}
-				_size++;
-				_root->update_branch_size();
-				rebalance(newNode);
+				add_node(current, parent, newNode);
 				return newNode->value.second;
 			}
 
@@ -391,44 +395,15 @@ namespace ft
 					else
 						current = current->right;
 				}
-
 				node_type *newNode = _node_alloc.allocate(1);
 				_node_alloc.construct(newNode, node_type(value, parent));
-				if (empty()) {
-					_root = newNode;
-					newNode->left = _rend;
-					newNode->right = _end;
-					_end->parent = _root;
-					_rend->parent = _root;
-				}
-				else {
-					if (current) {
-						current->parent = newNode;
-						if (current->type == node_type::END) {
-							newNode->right = current;
-							parent->right = newNode;
-						}
-						else if (current->type == node_type::REND) {
-							newNode->left = current;
-							parent->left = newNode;
-						}
-					}
-					else if (_comp(value.first, parent->key()))
-						parent->left = newNode;
-					else
-						parent->right = newNode;
-				}
-				_size++;
-				_root->update_branch_size();
-				rebalance(newNode);
+				add_node(current, parent, newNode);
 				return ft::make_pair(iterator(newNode), true);
 			}
 
 			iterator insert(iterator hint, const value_type& value) {
 				(void)hint;
-				if (count(value.first) == 0)
-					(*this)[value.first] = value.second;
-				return find(value.first);
+				return insert(value).first;
 			}
 
 			template<class InputIt>
@@ -652,7 +627,7 @@ namespace ft
 
 			reverse_iterator rend() { return reverse_iterator(iterator(_rend)); }
 			const_reverse_iterator rend() const { return const_reverse_iterator(const_iterator(_rend)); }
-
+/*
 			void parkour(node_type *current) {
 				if (current->left)
 					parkour(current->left);
@@ -676,11 +651,12 @@ namespace ft
 				if (empty())
 					return;
 				std::cout << "---------------------------------------------" << std::endl;
+				parkour(_root);
 				_root->print();
 				std::cout << "---------------------------------------------" << std::endl;
 				// parkour(_root);
 			}
-
+*/
 	};
 
 	template<class Key, class T, class Compare, class Alloc>

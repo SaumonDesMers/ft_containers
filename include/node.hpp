@@ -94,10 +94,11 @@ namespace ft
 				return copy;
 			}
 
-			int update_branch_size() {
-				left_branch_size = (left && left->type == NODE) ? left->update_branch_size() : 0;
-				right_branch_size = (right && right->type == NODE) ? right->update_branch_size() : 0;
-				return std::max(left_branch_size, right_branch_size) + 1;
+			void update_size() {
+				left_branch_size = (left && left->type == NODE) ? std::max(left->left_branch_size, left->right_branch_size) + 1 : 0;
+				right_branch_size = (right && right->type == NODE) ? std::max(right->left_branch_size, right->right_branch_size) + 1 : 0;
+				if (parent)
+					parent->update_size();
 			}
 
 			int balance() const { return left_branch_size - right_branch_size; }

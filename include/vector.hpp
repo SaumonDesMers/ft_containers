@@ -299,7 +299,7 @@ namespace ft
 
 			iterator erase(iterator first, iterator last) {
 				try {
-					std::cout << "Erase [" << *first << "," << (last == end() ? "end" : *last) << ") = [" << (first - begin()) << "," << (last - begin()) << ")" << std::endl;
+					// std::cout << "Erase [" << *first << "," << (last == end() ? "end" : *last) << ") = [" << (first - begin()) << "," << (last - begin()) << ")" << std::endl;
 					size_type offset = ft::distance(first, last);
 					for (iterator it=first; (it + offset)!=end(); it++) {
 						_alloc.destroy(it);
