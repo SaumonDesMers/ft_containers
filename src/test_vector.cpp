@@ -7,8 +7,10 @@ void debug(ft::vector<T>& v) {
 		std::cout << v[i] << (i != v.size() - 1 ? ", " : "");
 	std::cout << "\n_size: " << v.size() << std::endl;
 	std::cout << "_capacity: " << v.capacity() << std::endl;
-	std::cout << "front: " << v.front() << std::endl;
-	std::cout << "back: " << v.back() << std::endl;
+    if (!v.empty()) {
+	    std::cout << "front: " << v.front() << std::endl;
+	    std::cout << "back: " << v.back() << std::endl;
+    }
 	std::cout << std::endl;
 }
 
@@ -123,15 +125,15 @@ void test_insert() {
 }
 
 void test_iterator() {
-	ft::vector<int>    myvec;
+	ft::vector<int> myvec;
     for (size_t i = 0; i < 13; i++)
         myvec.push_back(i + 42);
-    ft::vector<int>::const_iterator    it = myvec.begin();
+    ft::vector<int>::const_iterator it = myvec.begin();
     std::cout << "FIRST: " << *it << std::endl;
     for (; it != myvec.end(); it++)
         std::cout << *it << " ";
     std::cout << std::endl;
-    ft::vector<int>::reverse_iterator    rit = myvec.rbegin();
+    ft::vector<int>::reverse_iterator   rit = myvec.rbegin();
     for (; rit != myvec.rend(); rit++)
         std::cout << *rit << " ";
     std::cout << std::endl;

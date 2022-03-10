@@ -1,9 +1,10 @@
-#include <include.hpp>
+#include "include.hpp"
 
 int main() {
 
-	// test_stack();
+	test_stack();
 	test_vector();
-	// test_map();
+	test_map();
+
 	return 0;
 }

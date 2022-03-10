@@ -112,7 +112,7 @@ void test_lower_bound_map() {
 	m[7] = "hey";
 	m[1] = "yo";
 	m[4] = "bonjour";
-	// m[6] = "mdr";
+	m[6] = "mdr";
 	m[9] = "lol";
 
 	map::iterator it;
@@ -132,7 +132,7 @@ void test_upper_bound_map() {
 	m[7] = "hey";
 	m[1] = "yo";
 	m[4] = "bonjour";
-	// m[6] = "mdr";
+	m[6] = "mdr";
 	m[9] = "lol";
 
 	map::iterator it;
@@ -287,7 +287,6 @@ void test_erase_map() {
 	for (int i=0; i<15; i++)
 		m[i] = "";
 
-	// m.print();
 	m.erase(m.find(5), m.find(9));
 	debug(m);
 }

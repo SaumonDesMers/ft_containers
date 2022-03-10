@@ -651,10 +651,8 @@ namespace ft
 				if (empty())
 					return;
 				std::cout << "---------------------------------------------" << std::endl;
-				parkour(_root);
 				_root->print();
 				std::cout << "---------------------------------------------" << std::endl;
-				// parkour(_root);
 			}
 */
 	};
